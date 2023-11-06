@@ -1,0 +1,7 @@
+{
+
+    "java.project.sourcePaths": ["./démonstrateur/src"], // Chemin des sources de votre projet
+    "java.project.referencedLibraries": [
+        "./démonstrateur/lib/*.jar" // Les bibliothèques externes de votre projet (s'il y en a)
+    ]
+}

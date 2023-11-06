@@ -1,9 +1,3 @@
-
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.*;
 import java.util.Scanner;
 
@@ -12,6 +6,7 @@ public class Main
     public static void main(String[] args) {
      
         String url = "jdbc:oracle:thin:@oracle1.ensimag.fr:1521:orcale1";
+        // "jdbc:oracle:thin:@oracle1.ensimag.fr:1521:nom_bd"
         String user="mohameml";
         String password = "mohameml";
 
