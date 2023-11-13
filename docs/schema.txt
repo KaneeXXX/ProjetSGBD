@@ -1,0 +1,132 @@
+@startuml
+entity Refuge {
+* e-mail
+--
+* nom
+* numTel
+* secGeo
+* dateOuv
+* dateFerme
+* nbrRepas
+* nbrDormir
+* texte
+* typePayement
+* prixNuite
+* prix
+}
+
+entity Repas {
+* email
+* typeRepas
+--
+* prixRepas
+}
+
+entity Formation {
+* numero
+--
+* annee
+* nom
+* dateDem
+* duree
+* nbrPlace
+* desc
+* prix
+* "la ou les activités"
+}
+
+entity Matériel {
+* marque
+* modele
+* anneeAchat
+}
+
+/'
+On peut inférer qu'un CompteUtilisateur appartient à un Adhérent
+'/
+entity CompteUtilisateur {
+* idUser
+}
+
+entity Lot {
+* marque
+* modele
+* anneeAchat
+--
+* categorie
+* nbPieces
+* prixPerte
+* typeActiv
+* texte "optionnel"
+* anneePeremption
+}
+
+entity Membre {
+* email
+* mot de passe
+* idUser
+--
+* nom
+* prenom
+* adrPost
+}
+
+/' membre spécifique '/
+entity Adhérent  {
+* idAdherent
+}
+
+entity RésérvationRefuge {
+* id
+--
+* date
+* heure
+* refuge
+* idMembreReserve
+* nbrNuits
+* nbrRepasReserve
+* prixTotal
+}
+
+entity RésérvationFormation {
+* id
+--
+* idAdhérent
+* formationInscrite
+* listeAttente
+* rang 'si liste d'attente
+}
+
+entity LocationMatériel {
+* id
+--
+* adhérent
+* nbPiecesReserv
+* dateRécup
+* dateRetour
+* nbPiecesPerdues
+}
+
+/' "Le matériel est enregistré sous forme de lots"  '/
+Lot "1..1 "-- "1..1" Matériel
+CompteUtilisateur "1..1" -- "1..1" Membre
+Adhérent --|> Membre
+
+LocationMatériel "0..*" -- "1..1" Matériel
+'LocationMatériel "0..*" -- "1..1" Adhérent
+'Adhérent "1..1" -- "0..*" RésérvationFormation
+RésérvationFormation "0..*" -- "1..1" Formation
+'Refuge "1..1" -- "0..*" LocationMatériel
+LocationMatériel "0..*" -- "1..1" CompteUtilisateur
+RésérvationFormation "0..*" -- "1..1" CompteUtilisateur
+'RésérvationFormation "0..*" -- "1..1" Adhérent
+'LocationMatériel "0..*" -- "1..1" Adhérent
+
+'RésérvationRefuge "0..*" -- "1..1" Membre
+RésérvationRefuge "0..*" -- "1..1" CompteUtilisateur
+RésérvationRefuge "0..*" -- "1..1" Refuge
+'Refuge "1..1" -- "0..*" Formation
+'Refuge "1..1" -- "0..*" RésérvationFormation
+
+Refuge "1..*" -- "1..*" Repas
+@enduml
