@@ -4,10 +4,10 @@
 all : run
 
 compile :
-	javac -d ./bin/ -sourcepath ./src/:./lib/ojdbc11.jar ./src/Main.java
+	javac -d ./bin/ -cp ./lib/ojdbc6.jar -sourcepath  ./src/ ./src/Main.java
 
 run : compile 
-	java -cp ./bin:./lib/ojdbc11.jar Main
+	java -cp ./bin:./lib/ojdbc6.jar Main
 
 
 clean :
