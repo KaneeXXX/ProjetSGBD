@@ -16,16 +16,20 @@ entity Refuge {
 }
 
 entity Repas {
-* email
+'* email
 * typeRepas
 --
 * prixRepas
 }
 
+entity Prix {
+* prix
+}
+
 entity Formation {
 * numero
---
 * annee
+--
 * nom
 * dateDem
 * duree
@@ -36,7 +40,7 @@ entity Formation {
 }
 
 entity Activité {
-* idFormation
+'* idFormation
 /' contrainte appli : position <= Formation(nbrActivité) '/
 * position
 --
@@ -67,6 +71,10 @@ entity Lot {
 * typeActiv
 * texte "optionnel"
 * anneePeremption
+}
+
+entity PiecesLouees {
+* nbrPiecesLouees
 }
 
 entity Membre {
@@ -153,6 +161,9 @@ RésérvationRefuge "0..*" -- "1..1" CompteUtilisateur
 RésérvationRefuge "0..*" -- "1..1" Refuge
 'Refuge "1..1" -- "0..*" Formation
 'Refuge "1..1" -- "0..*" RésérvationFormation
+
+LocationMatériel "0..*" -- "1..1" Lot
+(LocationMatériel, Lot) .. PiecesLouees
 
 Refuge "1..*" -- "1..*" Repas
 @enduml
