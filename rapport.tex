@@ -5,6 +5,7 @@
 \usepackage[T1]{fontenc} % Set character encoding to T1/Cork
 \usepackage{mlmodern}
 \usepackage{minted}
+\usepackage{svg}
 
 \AtBeginDocument{\def\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}}
 
@@ -22,6 +23,10 @@
 \end{tabular}
 \end{table}
 \section{Conception}
+\begin{figure}[h]
+\includesvg[inkscapelatex=false, width=\textwidth]{schema}
+\caption{Le diagramme entité-association}
+\end{figure}
 \end{document}
 
 % Local Variables:
