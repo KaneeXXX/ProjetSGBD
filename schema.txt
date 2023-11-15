@@ -19,7 +19,6 @@ entity Repas {
 '* email
 * typeRepas
 --
-* prixRepas
 }
 
 entity Prix {
@@ -47,11 +46,11 @@ entity Activité {
 * nomActivité
 }
 
-entity Matériel {
+/'entity Matériel {
 * marque
 * modele
 * anneeAchat
-}
+}'/
 
 /'
 On peut inférer qu'un CompteUtilisateur appartient à un Adhérent
@@ -135,35 +134,31 @@ entity ListeAttente {
 --
 }
 
-RésérvationFormation "0..*" -- "0..1" ListeAttente : EstDansListeAttente >
+RésérvationFormation "0..*" -- "0..1" ListeAttente : AListeAttente >
 
 /' Au moins 5 activités dans une formation,
    contrainte au niveau application '/
-Formation "1..*" -- "1..*" Activité
+Formation "1..*" -- "1..*" Activité : proposeActivité >
 
 /' "Le matériel est enregistré sous forme de lots"  '/
-Lot "1..1 "-- "1..1" Matériel
-CompteUtilisateur "1..1" -- "1..1" Membre
+CompteUtilisateur "1..1" -- "1..1" Membre : possèdeCompte <
 Adhérent --|> Membre
 
-LocationMatériel "0..*" -- "1..1" Matériel
-'LocationMatériel "0..*" -- "1..1" Adhérent
-'Adhérent "1..1" -- "0..*" RésérvationFormation
-RésérvationFormation "0..*" -- "1..1" Formation
-'Refuge "1..1" -- "0..*" LocationMatériel
-LocationMatériel "0..*" -- "1..1" CompteUtilisateur
-RésérvationFormation "0..*" -- "1..1" CompteUtilisateur
-'RésérvationFormation "0..*" -- "1..1" Adhérent
-'LocationMatériel "0..*" -- "1..1" Adhérent
+RésérvationFormation "0..*" -- "1..1" Formation : estRéservéDansFormation <
+LocationMatériel "0..*" -- "1..1" CompteUtilisateur : loueMatériel <
+RésérvationFormation "0..*" -- "1..1" CompteUtilisateur : réserveFormation <
+RésérvationRefuge "0..*" -- "1..1" CompteUtilisateur : réserveRefuge <
+RésérvationRefuge "0..*" -- "1..1" Refuge : estRéservéDansRefuge <
 
-'RésérvationRefuge "0..*" -- "1..1" Membre
-RésérvationRefuge "0..*" -- "1..1" CompteUtilisateur
-RésérvationRefuge "0..*" -- "1..1" Refuge
-'Refuge "1..1" -- "0..*" Formation
-'Refuge "1..1" -- "0..*" RésérvationFormation
+<> diamond1
 
-LocationMatériel "0..*" -- "1..1" Lot
-(LocationMatériel, Lot) .. PiecesLouees
+LocationMatériel "0..*" -- diamond1
+diamond1 -- "1..1" Lot : estLoué <
+diamond1 .. PiecesLouees
 
-Refuge "1..*" -- "1..*" Repas
+<> diamond2
+
+Refuge "1..*" -- diamond2 : proposeRepas >
+diamond2 -- "1..*" Repas
+diamond2 .. Prix
 @enduml
