@@ -15,19 +15,84 @@
 \maketitle
 \section{Introduction}
 \section{Analyse fonctionnelle}
-\textbf{Propriétés} : \{emailRef, nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite, typeRepas, prixRepas, idForm, anneeForm, nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm, nomAct, marque, modèle, annéeAchat, catégorie, nbPièces, prixPertDegr, typeAct, texteInfo, anneePerem, idUser, emailMem, pwdMem, nomMem, prenomMem adrPostMem, idAdherent\}
+\textbf{Propriétés} : \{emailRef, nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite, typeRepas, prixRepas, idForm, anneeForm, nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm, nomAct, marque, modèle, annéeAchat, catégorie, nbPièces, prixPertDegr, typeAct, texteInfo, anneePerem, idUser, emailMem, pwdMem, nomMem, prenomMem adrPostMem, idAdherent, idReservRef, dateReservRef, heureReservRef, refugeReserv, nbrNuitsReserv, nbrRepasReserv, prixTotalReserv, idReservForm, rang\}
 
 \textbf{Contraintes} :
+
+\textbf{DF one-to-one}
+
+emailRef $\rightarrow$ nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite
+
+emailRef, typeRepas $\rightarrow$ prixRepas
+
+idForm, anneeForm $\rightarrow$ nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm
+
+marque, modèle, annéeAchat $\rightarrow$ catégorie, nbPièces, prixPertDegr, typeAct, anneePerem
+
+emailMem $\rightarrow$ pwdMem, nomMem, prenomMem, adrPostMem
+
+idReservRef $\rightarrow$ dateReservRef, heureReservRef, refugeReserv, idUser, nbrNuitsReserv, nbrRepasReserv, prixTotalReserv
+
+idReservForm $\rightarrow$ idAdherent, idForm
+
+idAdhèrent, idForm $\rightarrow$ rang
+
+rang, idForm $\rightarrow$ idAdhèrent
+
+\textbf{Contraintes de valeur}
+
+dateOuv < dateFerm
+
+typePayement $\in$ \{espèce, chèque, carte-bleue\}
+
+\{randonnée, escalade, alpinisme, spéologie, ski de rando, cascade de glace\} $\in$ Activité
+
+nbrPlacesRepas $\geq$ 0
+
+nbrPlacesDormir $\geq$ 0
+
+prixNuite $\geq$ 0
+
+prixRepas $\geq$ 0
+
+dateDemForm.annee == anneeForm
+
+dureeForm $\geq$ 0
+
+nbrPlacesForm > 0
+
+prixForm $\geq$ 0
+
+nbPièces $\geq$ 0
+
+prixPertDegr $\geq$ 0
+
+dateOuv < dateReservRef < dateFerm
+
+nbrNuitsReserv $\geq$ 0
+
+nbrRepasReserv $\geq$ 0
+
+prixTotalReserv > 0
+
+\textbf{Contrainte de multiplicité}
+
+marque, modèle, annéeAchat $\rightarrow$ texteInfo
+
+\textbf{Contraintes contextuelles}
+
 \begin{table}[h]
 \scriptsize
 \begin{tabular}{llll}
   \textbf{DF one-to-one} & \textbf{contraintes de valeur} & \textbf{contrainte de multiplicité} & \textbf{contraintes contextuelles} \\
   
-  emailRef $\rightarrow$ nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite & dateOuv $\leq$ dateFerm & c & d \\
+  emailRef $\rightarrow$ nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite & dateOuv < dateFerm & & \\
   
   emailRef, typeRepas $\rightarrow$ prixRepas & typePayement $\in$ \{espèce, chèque, carte-bleue\} & & \\
   
   idForm, anneeForm $\rightarrow$ nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm & \{randonnée, escalade, alpinisme, spéologie, ski de rando, cascade de glace\} $\in$ Activité & & \\
+  
+  emailMem $\rightarrow$ pwdMem, nomMem, prenomMem, adrPostMem & & & \\
   
   
   
