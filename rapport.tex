@@ -1,0 +1,33 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[french]{babel}
+\usepackage{parskip}
+\usepackage[utf8]{inputenc} % Set input encoding to Unicode UTF-8
+\usepackage[T1]{fontenc} % Set character encoding to T1/Cork
+\usepackage{minted}
+\usepackage{svg}
+
+\AtBeginDocument{\def\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}}
+
+\title{Rapport du Projet de Bases de Données}
+\author{Pradana \textsc{Aumars}, David \textsc{Behrens}}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+\section{Analyse fonctionnelle}
+\begin{table}[h]
+\scriptsize
+\begin{tabular}{llll}
+  \textbf{DF one-to-one} & \textbf{contraintes de valeur} & \textbf{contrainte de multiplicité} & \textbf{contraintes contextuelles} \\
+\end{tabular}
+\end{table}
+\section{Conception}
+\begin{figure}[h]
+\includesvg[inkscapelatex=false, width=\textwidth]{schema}
+\caption{Le diagramme entité-association}
+\end{figure}
+\end{document}
+
+% Local Variables:
+% TeX-command-extra-options: "-shell-escape"
+% End:

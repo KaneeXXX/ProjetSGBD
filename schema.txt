@@ -1,0 +1,169 @@
+@startuml
+entity Refuge {
+* e-mail
+--
+* nom
+* numTel
+* secGeo
+* dateOuv
+* dateFerme
+* nbrRepas
+* nbrDormir
+* texte
+* typePayement
+* prixNuite
+* prix
+}
+
+entity Repas {
+'* email
+* typeRepas
+--
+* prixRepas
+}
+
+entity Prix {
+* prix
+}
+
+entity Formation {
+* numero
+* annee
+--
+* nom
+* dateDem
+* duree
+* nbrPlace
+* desc
+* prix
+* nbrActivité
+}
+
+entity Activité {
+'* idFormation
+/' contrainte appli : position <= Formation(nbrActivité) '/
+* position
+--
+* nomActivité
+}
+
+entity Matériel {
+* marque
+* modele
+* anneeAchat
+}
+
+/'
+On peut inférer qu'un CompteUtilisateur appartient à un Adhérent
+'/
+entity CompteUtilisateur {
+* idUser
+}
+
+entity Lot {
+* marque
+* modele
+* anneeAchat
+--
+* categorie
+* nbPieces
+* prixPerte
+* typeActiv
+* texte "optionnel"
+* anneePeremption
+}
+
+entity PiecesLouees {
+* nbrPiecesLouees
+}
+
+entity Membre {
+* email
+* mot de passe
+* idUser
+--
+* nom
+* prenom
+* adrPost
+}
+
+/' Avec la duplication, on aura un table Adhérent qui aura les mêmes attributs que le table Membre. Au niveau application, si un user a le droit de réserver une formation ou une location de matériel, on vérifie si idUser est dans le table Adhérent '/
+entity Adhérent  {
+* idAdherent
+}
+
+entity RésérvationRefuge {
+* id
+--
+* date
+* heure
+* refuge
+* idMembreReserve
+* nbrNuits
+* nbrRepasReserve
+* prixTotal
+}
+
+entity RésérvationFormation {
+* id
+--
+* idAdhérent
+* formationInscrite
+'* listeAttente
+'* rang 'si liste d'attente
+}
+
+entity LocationMatériel {
+* id
+--
+* adhérent
+* nbPiecesReserv
+* dateRécup
+* dateRetour
+* nbPiecesPerdues
+}
+
+/'
+EstDansListeAttente(IdAdherent {pk}, IdFormation {pk}, Rang)
+* IdAdhérent référence Adhérent(idAdhérent)
+* IdFormation référence Formation(idFormation)
+'/
+entity ListeAttente {
+* idAdhérent
+* idFormation
+* rang
+--
+}
+
+RésérvationFormation "0..*" -- "0..1" ListeAttente : EstDansListeAttente >
+
+/' Au moins 5 activités dans une formation,
+   contrainte au niveau application '/
+Formation "1..*" -- "1..*" Activité
+
+/' "Le matériel est enregistré sous forme de lots"  '/
+Lot "1..1 "-- "1..1" Matériel
+CompteUtilisateur "1..1" -- "1..1" Membre
+Adhérent --|> Membre
+
+LocationMatériel "0..*" -- "1..1" Matériel
+'LocationMatériel "0..*" -- "1..1" Adhérent
+'Adhérent "1..1" -- "0..*" RésérvationFormation
+RésérvationFormation "0..*" -- "1..1" Formation
+'Refuge "1..1" -- "0..*" LocationMatériel
+LocationMatériel "0..*" -- "1..1" CompteUtilisateur
+RésérvationFormation "0..*" -- "1..1" CompteUtilisateur
+'RésérvationFormation "0..*" -- "1..1" Adhérent
+'LocationMatériel "0..*" -- "1..1" Adhérent
+
+'RésérvationRefuge "0..*" -- "1..1" Membre
+RésérvationRefuge "0..*" -- "1..1" CompteUtilisateur
+RésérvationRefuge "0..*" -- "1..1" Refuge
+'Refuge "1..1" -- "0..*" Formation
+'Refuge "1..1" -- "0..*" RésérvationFormation
+
+LocationMatériel "0..*" -- "1..1" Lot
+(LocationMatériel, Lot) .. PiecesLouees
+
+Refuge "1..*" -- "1..*" Repas
+@enduml
