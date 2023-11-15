@@ -15,10 +15,23 @@
 \maketitle
 \section{Introduction}
 \section{Analyse fonctionnelle}
+\textbf{Propriétés} : \{emailRef, nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite, typeRepas, prixRepas, idForm, anneeForm, nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm, nomAct, marque, modèle, annéeAchat, catégorie, nbPièces, prixPertDegr, typeAct, texteInfo, anneePerem, idUser, emailMem, pwdMem, nomMem, prenomMem adrPostMem, idAdherent\}
+
+\textbf{Contraintes} :
 \begin{table}[h]
 \scriptsize
 \begin{tabular}{llll}
   \textbf{DF one-to-one} & \textbf{contraintes de valeur} & \textbf{contrainte de multiplicité} & \textbf{contraintes contextuelles} \\
+  
+  emailRef $\rightarrow$ nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite & dateOuv $\leq$ dateFerm & c & d \\
+  
+  emailRef, typeRepas $\rightarrow$ prixRepas & typePayement $\in$ \{espèce, chèque, carte-bleue\} & & \\
+  
+  idForm, anneeForm $\rightarrow$ nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm & \{randonnée, escalade, alpinisme, spéologie, ski de rando, cascade de glace\} $\in$ Activité & & \\
+  
+  
+  
+  
 \end{tabular}
 \end{table}
 \section{Conception}
