@@ -5,6 +5,9 @@
 \usepackage[T1]{fontenc} % Set character encoding to T1/Cork
 \usepackage{minted}
 \usepackage{svg}
+\usepackage{graphicx}
+
+\newcommand\twoheaduparrow{\mathrel{\rotatebox{90}{$\twoheadrightarrow$}}}
 
 \AtBeginDocument{\def\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}}
 
@@ -15,7 +18,7 @@
 \maketitle
 \section{Introduction}
 \section{Analyse fonctionnelle}
-\textbf{Propriétés} : \{emailRef, nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite, typeRepas, prixRepas, idForm, anneeForm, nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm, nomAct, marque, modèle, annéeAchat, catégorie, nbPièces, prixPertDegr, typeAct, texteInfo, anneePerem, idUser, emailMem, pwdMem, nomMem, prenomMem adrPostMem, idAdherent, idReservRef, dateReservRef, heureReservRef, refugeReserv, nbrNuitsReserv, nbrRepasReserv, prixTotalReserv, idReservForm, rang\}
+\textbf{Propriétés} : \{emailRef, nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite, typeRepas, prixRepas, idForm, anneeForm, nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm, nbrActivite, positionAct, nomAct, marque, modèle, annéeAchat, catégorie, nbPièces, prixPertDegr, typeAct, texteInfo, anneePerem, idUser, emailMem, pwdMem, nomMem, prenomMem adrPostMem, idAdherent, idReservRef, dateReservRef, heureReservRef, refugeReserv, nbrNuitsReserv, nbrRepasReserv, prixTotalReserv, idReservForm, rang\}
 
 \textbf{Contraintes} :
 
@@ -25,9 +28,13 @@ emailRef $\rightarrow$ nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas
 
 emailRef, typeRepas $\rightarrow$ prixRepas
 
-idForm, anneeForm $\rightarrow$ nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm
+idForm, anneeForm $\rightarrow$ nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm, nbrActivite
 
-marque, modèle, annéeAchat $\rightarrow$ catégorie, nbPièces, prixPertDegr, typeAct, anneePerem
+idForm, anneeForm, positionAct $\rightarrow$ nomAct
+
+% sous-catégorie organisé dans un arbre ?
+% implique nomAct ? Mais plusieurs ?
+marque, modèle, annéeAchat $\rightarrow$ catégorieLot, nbPièces, prixPertDegr, anneePerem
 
 emailMem $\rightarrow$ pwdMem, nomMem, prenomMem, adrPostMem
 
@@ -38,6 +45,12 @@ idReservForm $\rightarrow$ idAdherent, idForm
 idAdhèrent, idForm $\rightarrow$ rang
 
 rang, idForm $\rightarrow$ idAdhèrent
+
+sousCategorie $\rightarrow$ categorie
+
+idLocationMat $\rightarrow$ idAdhérent, nbPiecesReserves, dateRécup, dateRetour, nbrPiecesPerdues
+
+idUser $\rightarrow$ coutReserv, sommeMateriélAbime, sommeRembourse
 
 \textbf{Contraintes de valeur}
 
@@ -63,6 +76,8 @@ nbrPlacesForm > 0
 
 prixForm $\geq$ 0
 
+positionAct $\leq$ nbrActivite
+
 nbPièces $\geq$ 0
 
 prixPertDegr $\geq$ 0
@@ -75,30 +90,16 @@ nbrRepasReserv $\geq$ 0
 
 prixTotalReserv > 0
 
+dateRetour $<$ dateRecup + 14
+
 \textbf{Contrainte de multiplicité}
 
-marque, modèle, annéeAchat $\rightarrow$ texteInfo
+marque, modèle, annéeAchat $\not\rightarrow$ texteInfo
+
+% marque, modèle, annéeAchat $\twoheadrightarrow$ nomAct
 
 \textbf{Contraintes contextuelles}
 
-\begin{table}[h]
-\scriptsize
-\begin{tabular}{llll}
-  \textbf{DF one-to-one} & \textbf{contraintes de valeur} & \textbf{contrainte de multiplicité} & \textbf{contraintes contextuelles} \\
-  
-  emailRef $\rightarrow$ nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite & dateOuv < dateFerm & & \\
-  
-  emailRef, typeRepas $\rightarrow$ prixRepas & typePayement $\in$ \{espèce, chèque, carte-bleue\} & & \\
-  
-  idForm, anneeForm $\rightarrow$ nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm & \{randonnée, escalade, alpinisme, spéologie, ski de rando, cascade de glace\} $\in$ Activité & & \\
-  
-  emailMem $\rightarrow$ pwdMem, nomMem, prenomMem, adrPostMem & & & \\
-  
-  
-  
-  
-\end{tabular}
-\end{table}
 \section{Conception}
 \begin{figure}[h]
 \includesvg[inkscapelatex=false, width=\textwidth]{schema}
