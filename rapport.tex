@@ -7,8 +7,11 @@
 \usepackage{svg}
 \usepackage{hyphenat}
 \usepackage{amssymb}
+\usepackage{tabularx}
+\usepackage{booktabs}
 
 \AtBeginDocument{\def\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}}
+\newcommand\att[1]{\textnhtt{#1}}
 
 \title{Rapport du Projet de Bases de Données}
 \author{Pradana \textsc{Aumars}
@@ -25,13 +28,38 @@
 \maketitle
 \section{Introduction}
 \section{Analyse fonctionnelle}
-\textbf{Propriétés}: \textnhtt{emailRef}, nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite, typeRepas, prixRepas, idForm, anneeForm, nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm, nbrActivite, positionAct, nomAct, marque, modèle, annéeAchat, catégorie, nbPièces, prixPertDegr, typeAct, texteInfo, anneePerem, idUser, emailMem, pwdMem, nomMem, prenomMem adrPostMem, idAdherent, idReservRef, dateReservRef, heureReservRef, refugeReserv, nbrNuitsReserv, nbrRepasReserv, prixTotalReserv, idReservForm, rang
+\subsection*{Propriétés}
+\att{emailRef},
+\att{nomRef},
+\att{numTel},
+\att{secGeo},
+\att{dateOuv},
+\att{dateFerm},
+\att{nbrPlacesRepas},
+\att{nbrPlacesDormir},
+\att{textePrez},
+\att{typePayement},
+\att{prixNuite},
+\att{typeRepas},
+\att{prixRepas},
+\att{idForm},
+\att{anneeForm},
+\att{nomForm},
+\att{dateDemForm},
+\att{dureeForm}, nbrPlacesForm, descriptForm, prixForm, nbrActivite, positionAct, nomAct, marque, modèle, annéeAchat, catégorie, nbPièces, prixPertDegr, typeAct, texteInfo, anneePerem, idUser, emailMem, pwdMem, nomMem, prenomMem adrPostMem, idAdherent, idReservRef, dateReservRef, heureReservRef, refugeReserv, nbrNuitsReserv, nbrRepasReserv, prixTotalReserv, idReservForm, rang
 
-\textbf{Contraintes} :
+\subsection*{Contraintes}
 
-\textbf{DF one-to-one}
 
-emailRef $\rightarrow$ nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite
+\begin{table}[h]
+\tiny
+\begin{tabularx}{\columnwidth}{>{\raggedright}XXXX}
+\textbf{Dépendances fonctionelles}
+& \textbf{Contraintes de valeur}
+& \textbf{Contraintes de multiplicité}
+& \textbf{Contraintes contextuelles} \\
+\midrule
+\att{emailRef} $\rightarrow$ \att{nomRef}, \att{numTel}, \att{secGeo}, \att{dateOuv}, \att{dateFerm}, \att{nbrPlacesRepas}, \att{nbrPlacesDormir}, \att{textePrez}, \att{typePayement}, \att{prixNuite}
 
 emailRef, typeRepas $\rightarrow$ prixRepas
 
@@ -59,9 +87,7 @@ idLocationMat $\rightarrow$ idAdhérent, nbPiecesReserves, dateRécup, dateRetou
 
 idUser $\rightarrow$ coutReserv, sommeMateriélAbime, sommeRembourse
 
-\textbf{Contraintes de valeur}
-
-dateOuv < dateFerm
+& dateOuv < dateFerm
 
 typePayement $\in$ \{espèce, chèque, carte-bleue\}
 
@@ -99,13 +125,13 @@ prixTotalReserv > 0
 
 dateRetour $<$ dateRecup + 14
 
-\textbf{Contrainte de multiplicité}
-
-marque, modèle, annéeAchat $\not\rightarrow$ texteInfo
+& marque, modèle, annéeAchat $\not\rightarrow$ texteInfo
 
 marque, modèle, annéeAchat $\twoheadrightarrow$ nomAct
 
-\textbf{Contraintes contextuelles}
+& \\
+\end{tabularx}
+\end{table}
 
 \section{Conception}
 \begin{figure}[h]
