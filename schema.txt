@@ -21,9 +21,7 @@ entity Repas {
 --
 }
 
-entity Prix {
-* prix
-}
+Object prix
 
 entity Formation {
 * numero
@@ -83,9 +81,7 @@ entity Arbre {
 Lot "1..*" -- "1..1" Arbre : AUneCategorie >
 Arbre "0..1" -- "0..*" Arbre : EstParentDe >
 
-entity PiecesLouees {
-* nbrPiecesLouees
-}
+object PiecesLouees
 
 entity Membre {
 * email
@@ -110,9 +106,11 @@ entity RésérvationRefuge {
 * refuge
 * idMembreReserve
 * nbrNuits
-* nbrRepasReserve
+'* nbrRepasReserve
 * prixTotal
 }
+
+object nbRepasReserve
 
 entity RésérvationFormation {
 * id
@@ -172,5 +170,10 @@ diamond1 .. PiecesLouees
 
 Refuge "1..*" -- diamond2 : proposeRepas >
 diamond2 -- "1..*" Repas
-diamond2 .. Prix
+diamond2 .. prix
+
+<> diamond3
+RésérvationRefuge "0..*" -- diamond3 : reserveRepas >
+diamond3 -- "1..*" Repas
+diamond3 .. nbRepasReserve
 @enduml
