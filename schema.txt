@@ -1,29 +1,25 @@
 @startuml
 entity Refuge {
-* e-mail
+* emailRef
 --
-* nom
+* nomRef
 * numTel
 * secGeo
 * dateOuv
 * dateFerme
-* nbrRepas
-* nbrDormir
-* texte
+* nbrPlacesRepas
+* nbrPlacesDormir
+* textePrez
 * typePayement
 * prixNuite
-* prix
 }
 
 entity Repas {
-'* email
 * typeRepas
 --
 }
 
-entity Prix {
-* prix
-}
+Object prix
 
 entity Formation {
 * numero
@@ -41,10 +37,11 @@ entity Formation {
 entity Activité {
 '* idFormation
 /' contrainte appli : position <= Formation(nbrActivité) '/
-* position
---
+'* position
 * nomActivité
 }
+
+object positionAct
 
 /'entity Matériel {
 * marque
@@ -57,6 +54,10 @@ On peut inférer qu'un CompteUtilisateur appartient à un Adhérent
 '/
 entity CompteUtilisateur {
 * idUser
+--
+* coutReserv
+* sommeMateriélAbime
+* sommeRembourse
 }
 
 entity Lot {
@@ -64,22 +65,28 @@ entity Lot {
 * modele
 * anneeAchat
 --
-* categorie
+'* categorieLot
 * nbPieces
 * prixPerte
-* typeActiv
+'* typeActiv
 * texte "optionnel"
 * anneePeremption
 }
 
-entity PiecesLouees {
-* nbrPiecesLouees
+entity Arbre {
+* sousCategorie
+--
+* categorie
 }
+Lot "1..*" -- "1..1" Arbre : AUneCategorie >
+Arbre "0..1" -- "0..*" Arbre : EstParentDe >
+
+object PiecesLouees
 
 entity Membre {
 * email
 * mot de passe
-* idUser
+'* idUser
 --
 * nom
 * prenom
@@ -99,9 +106,11 @@ entity RésérvationRefuge {
 * refuge
 * idMembreReserve
 * nbrNuits
-* nbrRepasReserve
+'* nbrRepasReserve
 * prixTotal
 }
+
+object nbRepasReserve
 
 entity RésérvationFormation {
 * id
@@ -136,13 +145,11 @@ entity ListeAttente {
 
 RésérvationFormation "0..*" -- "0..1" ListeAttente : AListeAttente >
 
-/' Au moins 5 activités dans une formation,
-   contrainte au niveau application '/
-Formation "1..*" -- "1..*" Activité : proposeActivité >
+Lot "1..*" -- "1..*" Activité : compatibleAvecActivité >
 
 /' "Le matériel est enregistré sous forme de lots"  '/
-CompteUtilisateur "1..1" -- "1..1" Membre : possèdeCompte <
-Adhérent --|> Membre
+CompteUtilisateur "1..1" -- "0..1" Membre : possèdeCompte <
+Adhérent --|> Membre : { facultatif } 
 
 RésérvationFormation "0..*" -- "1..1" Formation : concerneFormation >
 LocationMatériel "0..*" -- "1..1" CompteUtilisateur : loueMatériel <
@@ -160,5 +167,14 @@ diamond1 .. PiecesLouees
 
 Refuge "1..*" -- diamond2 : proposeRepas >
 diamond2 -- "1..*" Repas
-diamond2 .. Prix
+diamond2 .. prix
+
+<> diamond3
+RésérvationRefuge "0..*" -- diamond3 : reserveRepas >
+diamond3 -- "1..*" Repas
+diamond3 .. nbRepasReserve
+
+/' Au moins 5 activités dans une formation,
+   contrainte au niveau application '/
+Formation "1..*" -- "1..*" : proposeActivitéForm >
 @enduml

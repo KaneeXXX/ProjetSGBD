@@ -5,29 +5,124 @@
 \usepackage[T1]{fontenc} % Set character encoding to T1/Cork
 \usepackage{minted}
 \usepackage{svg}
+\usepackage{hyphenat}
+\usepackage{amssymb}
+\usepackage{tabularx}
+\usepackage{booktabs}
 
 \AtBeginDocument{\def\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}}
+\newcommand\att[1]{\textnhtt{#1}}
 
 \title{Rapport du Projet de Bases de Données}
-\author{Pradana \textsc{Aumars}, David \textsc{Behrens}}
+\author{Pradana \textsc{Aumars}
+  \and
+  David \textsc{Behrens}
+  \and
+  El Hadji Abdoul Aziz \textsc{Kane}
+  \and
+  Mohamed Lemine \textsc{Mohamed Ahmed}
+  \and
+  Mohamedou \textsc{Chrif M'hamed}}
 
 \begin{document}
 \maketitle
 \section{Introduction}
 \section{Analyse fonctionnelle}
-\textbf{Propriétés} : \{emailRef, nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite, typeRepas, prixRepas, idForm, anneeForm, nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm, nomAct, marque, modèle, annéeAchat, catégorie, nbPièces, prixPertDegr, typeAct, texteInfo, anneePerem, idUser, emailMem, pwdMem, nomMem, prenomMem adrPostMem, idAdherent, idReservRef, dateReservRef, heureReservRef, refugeReserv, nbrNuitsReserv, nbrRepasReserv, prixTotalReserv, idReservForm, rang\}
+\subsection*{Propriétés}
+% Refuge
+\att{emailRef}, % email du refuge
+\att{nomRef}, % nom du refuge
+\att{numTel}, % numéro de téléphone (optionnel) du refuge
+\att{secGeo}, % secteur géographique du refuge
+\att{dateOuv}, % date d'ouverture du refuge
+\att{dateFerm}, % date de fermeture du refuge
+\att{nbrPlacesRepas}, % nombre de places pour les repas dans un refuge
+\att{nbrPlacesDormir}, % nombre de places pour dormir dans un refuge
+\att{textePrez}, % texte de présentation d'un refuge
+\att{typePayement}, % type de paiement pour un refuge
+\att{prixNuite}, % prix d'une nuite dans un refuge
+% Repas
+\att{typeRepas}, % type de repas
+\att{prixRepas}, % prix d'un repas
+% Formation
+\att{idForm}, % id de la formation
+\att{anneeForm}, % annee de dispension de la formation
+\att{nomForm}, % nom de la formation
+\att{dateDemForm}, % date de démarrage de la formation
+\att{dureeForm}, % durée en jours de la formation
+\att{nbrPlacesForm}, % nombre de place total de la formation
+\att{descriptForm}, % description de la formation
+\att{prixForm}, % prix de la formation
+\att{nbrActivite}, % nombre d'activités dans la formation
+% Activité
+\att{nomAct}, % nom de l'activité
+\att{typeAct}, % type d'activité
+% Matériel/Lot
+\att{marque}, % marque du matériel
+\att{modele}, % modèle du matériel
+\att{anneeAchat}, % annee d'achat du matériel
+\att{categorie}, % catégorie du matériel
+\att{nbPiecesLot}, % nombre de pièces dans le lot
+\att{prixPertDegr}, % prix en cas de perte/dégradation d'une pièce du lot
+\att{texteInfo}, % texte (optionnel) sur le matériel
+\att{anneePerem}, % année de péremption du matériel
+% Compte Utilisateur
+\att{idUser}, % id du compte utilisateur
+% Membre
+\att{emailMem}, % adresse mail du membre
+\att{pwdMem}, % mot de passe du membre
+\att{nomMem}, % nom du membre
+\att{prenomMem}, % prénom du membre
+\att{adrPostMem}, % adresse postale du membre
+% Adhérent
+\att{idAdherent}, % id de l'adhérent
+% Réservation de refuge
+\att{idReservRef}, % id d'une réservation de refuge
+\att{dateReservRef}, % date d'une réservatinon d'une refuge
+\att{heureReservRef}, % heure d'une réservation d'une refuge
+\att{nbrNuitsReserv}, % nombre de nuits réservées
+\att{nbrRepasReserv}, % nombre de repas réservés
+\att{prixTotalReserv}, % prix total de la réservation
+% Réservation de formation
+\att{idReservForm}, % id d'une réservation de formation
+% Liste d'attente
+\att{rang} % rang de l'adhérent dans la liste d'attente
 
-\textbf{Contraintes} :
+\subsection*{Contraintes}
 
-\textbf{DF one-to-one}
+\begin{table}[h]
+\tiny
+\begin{tabularx}{\columnwidth}{>{\raggedright}XXXX}
+\textbf{Dépendances fonctionelles}
+& \textbf{Contraintes de valeur}
+& \textbf{Contraintes de multiplicité}
+& \textbf{Contraintes contextuelles} \\
+\midrule
+\att{emailRef}
+$\rightarrow$
+\att{nomRef},
+\att{numTel},
+\att{secGeo},
+\att{dateOuv},
+\att{dateFerm},
+\att{nbrPlacesRepas},
+\att{nbrPlacesDormir},
+\att{textePrez},
+\att{typePayement},
+\att{prixNuite}
 
-emailRef $\rightarrow$ nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite
+\att{emailRef},
+\att{typeRepas}
+$\rightarrow$
+\att{prixRepas}
 
-emailRef, typeRepas $\rightarrow$ prixRepas
+idForm, anneeForm $\rightarrow$ nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm, nbrActivite
 
-idForm, anneeForm $\rightarrow$ nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm
+idForm, anneeForm, positionAct $\rightarrow$ nomAct
 
-marque, modèle, annéeAchat $\rightarrow$ catégorie, nbPièces, prixPertDegr, typeAct, anneePerem
+% sous-catégorie organisé dans un arbre ?
+% implique nomAct ? Mais plusieurs ?
+marque, modèle, annéeAchat $\rightarrow$ catégorieLot, nbPièces, prixPertDegr, anneePerem
 
 emailMem $\rightarrow$ pwdMem, nomMem, prenomMem, adrPostMem
 
@@ -39,9 +134,13 @@ idAdhèrent, idForm $\rightarrow$ rang
 
 rang, idForm $\rightarrow$ idAdhèrent
 
-\textbf{Contraintes de valeur}
+sousCategorie $\rightarrow$ categorie
 
-dateOuv < dateFerm
+idLocationMat $\rightarrow$ idAdhérent, nbPiecesReserves, dateRécup, dateRetour, nbrPiecesPerdues
+
+idUser $\rightarrow$ coutReserv, sommeMateriélAbime, sommeRembourse
+
+& dateOuv < dateFerm
 
 typePayement $\in$ \{espèce, chèque, carte-bleue\}
 
@@ -63,6 +162,8 @@ nbrPlacesForm > 0
 
 prixForm $\geq$ 0
 
+positionAct $\leq$ nbrActivite
+
 nbPièces $\geq$ 0
 
 prixPertDegr $\geq$ 0
@@ -75,30 +176,18 @@ nbrRepasReserv $\geq$ 0
 
 prixTotalReserv > 0
 
-\textbf{Contrainte de multiplicité}
+dateRetour $<$ dateRecup + 14
 
-marque, modèle, annéeAchat $\rightarrow$ texteInfo
+& marque, modèle, annéeAchat $\not\rightarrow$ texteInfo
 
-\textbf{Contraintes contextuelles}
+marque, modèle, annéeAchat $\twoheadrightarrow$ nomAct
 
-\begin{table}[h]
-\scriptsize
-\begin{tabular}{llll}
-  \textbf{DF one-to-one} & \textbf{contraintes de valeur} & \textbf{contrainte de multiplicité} & \textbf{contraintes contextuelles} \\
-  
-  emailRef $\rightarrow$ nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite & dateOuv < dateFerm & & \\
-  
-  emailRef, typeRepas $\rightarrow$ prixRepas & typePayement $\in$ \{espèce, chèque, carte-bleue\} & & \\
-  
-  idForm, anneeForm $\rightarrow$ nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm & \{randonnée, escalade, alpinisme, spéologie, ski de rando, cascade de glace\} $\in$ Activité & & \\
-  
-  emailMem $\rightarrow$ pwdMem, nomMem, prenomMem, adrPostMem & & & \\
-  
-  
-  
-  
-\end{tabular}
+idForm, anneeForm $\twoheadrightarrow$ nomAct
+
+& \\
+\end{tabularx}
 \end{table}
+
 \section{Conception}
 \begin{figure}[h]
 \includesvg[inkscapelatex=false, width=\textwidth]{schema}
