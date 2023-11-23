@@ -9,6 +9,7 @@
 \usepackage{amssymb}
 \usepackage{tabularx}
 \usepackage{booktabs}
+\usepackage{adjustbox}
 
 \AtBeginDocument{\def\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}}
 \newcommand\att[1]{\textnhtt{#1}}
@@ -57,17 +58,28 @@
 % Activité
 \att{nomAct}, % nom de l'activité
 \att{typeAct}, % type d'activité
-% Matériel/Lot
+% Lot
 \att{marque}, % marque du matériel
 \att{modele}, % modèle du matériel
 \att{anneeAchat}, % annee d'achat du matériel
-\att{categorie}, % catégorie du matériel
 \att{nbPiecesLot}, % nombre de pièces dans le lot
 \att{prixPertDegr}, % prix en cas de perte/dégradation d'une pièce du lot
 \att{texteInfo}, % texte (optionnel) sur le matériel
 \att{anneePerem}, % année de péremption du matériel
+% LocationMateriel
+\att{idLocationMat}, % id de la location de matériel
+\att{nbPiecesReserv},
+\att{dateRecup},
+\att{dateRetour},
+\att{nbPiecesPerdues},
+% ArbreCategorie
+\att{categorie}, % un noeud fils catégorie
+\att{categoriePere}, % un noeud père catégorie
 % Compte Utilisateur
 \att{idUser}, % id du compte utilisateur
+\att{coutReserv},
+\att{sommeMaterielAbime},
+\att{sommeRembourse},
 % Membre
 \att{emailMem}, % adresse mail du membre
 \att{pwdMem}, % mot de passe du membre
@@ -85,19 +97,23 @@
 \att{prixTotalReserv}, % prix total de la réservation
 % Réservation de formation
 \att{idReservForm}, % id d'une réservation de formation
+% NB : 0/1..* -- 0/1..* => attribut d'association / 
 % Liste d'attente
 \att{rang} % rang de l'adhérent dans la liste d'attente
 
 \subsection*{Contraintes}
 
-\begin{table}[h]
-\tiny
-\begin{tabularx}{\columnwidth}{>{\raggedright}XXXX}
+\begin{table}[h!]
+  \tiny
+  \begin{adjustbox}{center}
+\begin{tabularx}{0.9\paperwidth}{>{\raggedright}XXXX}
 \textbf{Dépendances fonctionelles}
 & \textbf{Contraintes de valeur}
 & \textbf{Contraintes de multiplicité}
 & \textbf{Contraintes contextuelles} \\
 \midrule
+%% Dépendances fonctionnelles
+% Refuge
 \att{emailRef}
 $\rightarrow$
 \att{nomRef},
@@ -111,53 +127,128 @@ $\rightarrow$
 \att{typePayement},
 \att{prixNuite}
 
+% proposeRepas
 \att{emailRef},
 \att{typeRepas}
 $\rightarrow$
 \att{prixRepas}
 
-idForm, anneeForm $\rightarrow$ nomForm, dateDemForm, dureeForm, nbrPlacesForm, descriptForm, prixForm, nbrActivite
+% Formation
+\att{idForm},
+\att{anneeForm}
+$\rightarrow$
+\att{nomForm},
+\att{dateDemForm},
+\att{dureeForm}
+\att{nbrPlacesForm},
+\att{descriptForm},
+\att{prixForm},
+\att{nbrActivite}
 
-idForm, anneeForm, positionAct $\rightarrow$ nomAct
+% Lot
+\att{marque},
+\att{modele},
+\att{anneeAchat}
+$\rightarrow$
+\att{nbPiecesLot},
+\att{prixPertDegr},
+\att{texteInfo},
+\att{anneePerem}
 
-% sous-catégorie organisé dans un arbre ?
-% implique nomAct ? Mais plusieurs ?
-marque, modèle, annéeAchat $\rightarrow$ catégorieLot, nbPièces, prixPertDegr, anneePerem
+% ArbreCategorie
+\att{categorie}
+$\rightarrow$
+\att{categoriePere}
 
-emailMem $\rightarrow$ pwdMem, nomMem, prenomMem, adrPostMem
+% AUneCategorie
+\att{marque},
+\att{modele},
+\att{anneeAchat}
+$\rightarrow$
+\att{categorie}
 
-idReservRef $\rightarrow$ dateReservRef, heureReservRef, refugeReserv, idUser, nbrNuitsReserv, nbrRepasReserv, prixTotalReserv
+% Membre
+\att{emailMem}
+$\rightarrow$
+\att{pwdMem},
+\att{nomMem},
+\att{prenomMem},
+\att{adrPostMem}
 
-idReservForm $\rightarrow$ idAdherent, idForm
+% PossedeCompte
+\att{emailMem}
+$\rightarrow$
+\att{idUser}
 
-idAdhèrent, idForm $\rightarrow$ rang
+% ReservationRefuge
+\att{idReservRef}
+$\rightarrow$
+\att{dateReservRef},
+\att{heureReservRef},
+\att{refugeReserv},
+\att{idUser},
+\att{nbrNuitsReserv},
+\att{nbrRepasReserv},
+\att{prixTotalReserv}
 
-rang, idForm $\rightarrow$ idAdhèrent
+% ConcerneRefuge
+\att{idReservRef}
+$\rightarrow$
+\att{emailRef}
 
-sousCategorie $\rightarrow$ categorie
+% ReservationFormation
+\att{idReservForm}
+$\rightarrow$
+\att{idAdherent},
+\att{idForm}
 
-idLocationMat $\rightarrow$ idAdhérent, nbPiecesReserves, dateRécup, dateRetour, nbrPiecesPerdues
+% ConcerneFormation
+\att{idReservForm}
+$\rightarrow$
+\att{idForm},
+\att{anneeForm}
 
-idUser $\rightarrow$ coutReserv, sommeMateriélAbime, sommeRembourse
+% LocationMateriel
+\att{idLocationMat}
+$\rightarrow$
+\att{idAdherent},
+\att{nbPiecesReserves},
+\att{dateRecup},
+\att{dateRetour},
+\att{nbrPiecesPerdues}
 
-& dateOuv < dateFerm
+% CompteUtilisateur
+\att{idUser}
+$\rightarrow$
+\att{coutReserv},
+\att{sommeMaterielAbime},
+\att{sommeRembourse}
 
-typePayement $\in$ \{espèce, chèque, carte-bleue\}
+& %% Contraintes de valeur
+% Refuge
+$\att{dateOuv} < \att{dateFerm}$
 
-\{randonnée, escalade, alpinisme, spéologie, ski de rando, cascade de glace\} $\in$ Activité
+$\att{nbrPlacesRepas} \geq 0$
 
-nbrPlacesRepas $\geq$ 0
+$\att{nbrPlacesDormir} \geq 0$
 
-nbrPlacesDormir $\geq$ 0
+$\att{typePayement} \in \{ \texttt{"espèce"}, \texttt{"chèque"}, \texttt{"carte-bleue"} \}$
 
-prixNuite $\geq$ 0
+$\att{typeAct} \in \{ \texttt{"randonnée"}, \texttt{"escalade"}, \texttt{"alpinisme"}, \texttt{"spéologie"}, \texttt{"ski de rando"}, \texttt{"cascade de glace"} \}$
 
-prixRepas $\geq$ 0
+$\att{prixNuite} \geq 0$
 
-dateDemForm.annee == anneeForm
+% Repas
+$\att{prixRepas} \geq 0$
 
-dureeForm $\geq$ 0
+$\att{typeRepas} \in \{ \texttt{"déjeuner"}, \texttt{"dîner"}, \texttt{"souper"}, \texttt{"casse-croûte"} \}$
 
+% Formation
+$\att{dateDemForm.annee} == \att{anneeForm}$
+
+$\att{dureeForm} \geq 0$
+
+%
 nbrPlacesForm > 0
 
 prixForm $\geq$ 0
@@ -184,12 +275,18 @@ marque, modèle, annéeAchat $\twoheadrightarrow$ nomAct
 
 idForm, anneeForm $\twoheadrightarrow$ nomAct
 
+% proposeActiviteForm
+\att{idForm},
+\att{anneeForm},
+$\twoheadrightarrow$
+\att{nomAct}
+
 & \\
 \end{tabularx}
+\end{adjustbox}
 \end{table}
-
 \section{Conception}
-\begin{figure}[h]
+\begin{figure}[h!]
 \includesvg[inkscapelatex=false, width=\textwidth]{schema}
 \caption{Le diagramme entité-association}
 \end{figure}
