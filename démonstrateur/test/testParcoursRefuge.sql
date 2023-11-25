@@ -33,6 +33,7 @@ SELECT * FROM Refuge ;
 
 -- TABLE 
 
+
 CREATE TABLE ReserveRefuge
 (
     id INT PRIMARY KEY ,
@@ -42,10 +43,12 @@ CREATE TABLE ReserveRefuge
     nbrRepas INT , 
     nbrNuits  INT ,
     
-    FOREIGN KEY(idRefuge) REFERENCES Refuge(email)
+    FOREIGN KEY(idRefuge) REFERENCES Refuge(email) , 
+
     
 );
 
+SELECT * FROM Membre ;
 
 INSERT INTO ReserveRefuge(id , dateReserv , heure , idRefuge , nbrRepas , nbrNuits) 
 VALUES
