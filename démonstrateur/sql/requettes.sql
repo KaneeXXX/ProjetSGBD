@@ -31,12 +31,34 @@ SELECT COUNT(*) as count FROM memebre WHERE email=? AND motdepasse=?   :
 
 
 -- sélection des activités 
-SELECT nomActivité FROM proposeActivitéForm WHERE  
 
 
-SELECT nom ,  FROM Formation ORDER BY annee,num,nom
 
-SELECT * FROM Formation ORDER BY annee,nom
+
+-- nomvre de formation réservers :
+CREATE VIEW tabNbPlaceReservFormation AS 
+SELECT  Formation.annee , Formation.numero  ,  Formation.nbPlace - COUNT(*)   AS nombreReservForm  FROM concerneFormation , Formation 
+WHERE Formation.annee = concerneFormation.annee AND Formation.numero = concerneFormation.annee 
+GROUP BY Formation.annee , Formation.numero   ;
+
+
+
+-- on sélectionn  pour chaque formation(annee , numero) :  ---> nom , Noms_ACtivtés , DateDem , duree , nbPlace Init ;  
+
+CREATE VIEW  infoFormation AS 
+SELECT  Formation.annee  , Formation.numero , Formation.nom , nomAct , dateDem , duree , nbPlace  FROM Formation ,ActFor 
+WHERE Formation.numero = ActFor.numero AND Formation.annee = ActFor.annee ORDER BY Formation.annee , Formation.numero , nom;
+
+
+
+-- Résultat démande : 
+
+SELECT  infoFormation.annee  , infoFormation.numero , infoFormation.nom , nomAct , dateDem , duree , nbPlace - nombreReservForm    
+FROM tabNbPlaceReservFormation ,infoFormation 
+WHERE infoFormation.numero = tabNbPlaceReservFormation.numero AND infoFormation.annee = tabNbPlaceReservFormation.annee 
+ORDER BY Formation.annee , Formation.numero , nom;
+
+
 
 
 

@@ -1,6 +1,11 @@
 package packages;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 import java.sql.*;
 import java.util.Scanner;
+import java.util.Date;
 
 
 
@@ -14,56 +19,44 @@ public class requettes
 
 
 
-
-    public static boolean connexionMembre(Connection connection)
+/*
+ * 
+ *
+ * --------------------------------------------- Connexion && Inscription : ----------------------------------------- 
+ * 
+ * 
+*/
+    
+    /*
+     * ------------------- Connexion : ----------------- 
+     */
+    public static boolean connexionMembre(Connection connection , Scanner sc )
     {
         try {
     
-            PreparedStatement stmt = connection.prepareStatement("SELECT COUNT(*) as count FROM membre WHERE Email=? AND motdepasse=? ");
-
-            
-            Scanner sc = new Scanner(System.in);
+            PreparedStatement stmt = connection.prepareStatement("SELECT COUNT(*) as count FROM membre WHERE Email=? AND password=? ");
 
             System.out.print("Entrez votre emial svp : ");
-            
             String emialAvecRetour = sc.nextLine();
             String email = emialAvecRetour.replace("\n", "");
 
-
-
             System.out.print("Entrez votre mot de passe svp : ");
-            
             String passwordAvecRetour = sc.nextLine();
             String password = passwordAvecRetour.replace("\n", "");
 
 
-
-
-            sc.close();
-
-            //
             stmt.setString(1, email);
             stmt.setString(2, password);
 
-
-            
-
             ResultSet res = stmt.executeQuery();
-
-
-
             int verif = -1;
-
 
             while (res.next()) 
             {
-                verif = res.getInt("COUNT");    
+                verif = res.getInt("COUNT");  
 
             
             }
-
-
-
 
             if(verif==1)
             {
@@ -94,155 +87,241 @@ public class requettes
     }
 
 
+    /*
+     * 
+     * ------------  Inscription : ------------ 
+    */
+
     public static boolean inscriptionMembre(Connection connection)
     {
         boolean bool = true ;
 
 
 
-        return true;
+        return bool;
 
 
 
     }
 
 
+/*
+ * 
+ *--------------------------------- Parcour des informations : --------------------------------------------- 
+ * 
+ * 
+*/
 
 
-
+    
+    /*
+     * ------------------ Parcour des formations : -------------------- 
+    */
 
     public static void afficherFormation(Connection connection)
     {
-        try{
-            Statement stmt = connection.createStatement();
-            ResultSet res =stmt.executeQuery("SELECT * FROM Formation ORDER BY annee,num,nom");
 
-            while(res.next())
-            {
-                String nomFormation = res.getString("nom");
-                Date date = res.getDate("annee");
-                int num = res.getInt("num");
-                System.out.println(date +"\t" + num + "\t" + nomFormation);
-            }
-            
-            
-        }
-        catch (SQLException e) 
+        try 
         {
+            // Créer un objet Statement : 
+            Statement statement = connection.createStatement();
 
-            e.printStackTrace();
-        }
+            // Lire le fichier SQL : 
+            BufferedReader reader = new BufferedReader(new FileReader("src/sql/parcourInfo/afficheformation.sql"));
+            StringBuilder query = new StringBuilder();
+            String line;
 
-    }
+            ResultSet res = statement.executeQuery("SELECT * FROM Membre");  // Init : ???  
 
-
-
-    public static void afficherRefuge(Connection connection)
-    {
-        try{
-            Statement stmt = connection.createStatement();
-
-            Scanner sc = new Scanner(System.in);
-            System.out.println("si vous voulez ");
-
-            ResultSet res =stmt.executeQuery("SELECT * FROM Formation ORDER BY annee,num,nom");
-
-            while(res.next())
+            // Parcourir le fichier ligne par ligne
+            while ((line = reader.readLine()) != null) 
             {
-                String nomFormation = res.getString("nom");
-                Date date = res.getDate("annee");
-                int num = res.getInt("num");
-                System.out.println(date +"\t" + num + "\t" + nomFormation);
-            }
-            
-            
-        }
-        catch (SQLException e) 
-        {
 
-            e.printStackTrace();
-        }
+                String lineCopie = new String(line);
 
-    }
-
-
-
-
-
-
-
-
-    public static void ajouter(Connection connection)
-    {
-        try {
-        
-            PreparedStatement stmt = connection.prepareStatement("INSERT INTO Comptes (NC , NOM , SOLDE ) VALUES (? , ? , ? )");
-
-
-
-            Scanner sc = new Scanner(System.in);
-
-
-            // on récupere le nom :
-
-            System.out.print("Entrez votre nom svp : ");
-
-            String nom = sc.nextLine();
-
-            stmt.setString(1, nom);
-
-
-            // on récupere le solde :
-
-            System.out.print("Entrez votre solde svp : ");
-            int  solde = sc.nextInt();
-            stmt.setInt(2, solde);
-
-            
-
-            // valider la transaction :
-
-            connection.commit();
-
-            // on ferme le Scanner :
-            sc.close();
-        } 
-        catch (SQLException e) 
-        {
-
-            // En cas d'erreur, annuler la transaction
-            if (connection != null) 
-            {
-                try 
+                // Vérifier si la ligne est vide ou un commentaire
+                if(!lineCopie.trim().isEmpty() && !lineCopie.trim().startsWith("--")) 
                 {
-                    connection.rollback();
-                    System.out.println("La transaction a été annulée en raison d'une erreur.");
-                } 
-                catch (SQLException ex) 
+                    query.append(line).append(" ");
+                }
+
+                // Si la ligne se termine par un point-virgule, exécuter la requête
+                if (lineCopie.trim().endsWith(";")) 
                 {
-                    ex.printStackTrace();
+                    // Exécuter la requête
+
+                    res = statement.executeQuery(query.toString().replace(";", " "));
+
+                    // Réinitialiser la requête
+                    query = new StringBuilder();
                 }
             }
 
-            e.printStackTrace();
+
+
+            // affichage de résultat : 
+
+            System.out.println("Anneé , numéro , nom , , activités , dateDém , Duree , nbPlaceRes ");
+
+            while(res.next())
+            {
+               int  annee = res.getInt("annee");
+               int numero = res.getInt("numero");
+               String nom = res.getString("nom");
+               String activté = res.getString("nomActivité");
+               Date datedem = res.getDate("dateDem");
+               int duree = res.getInt("duree");
+               int nbRestant = res.getInt("nbrRestant");
+               System.out.println(annee + ",  " + numero + " , " + nom + ", " + activté + " , " + datedem + " , " + duree + " , " + nbRestant );
+
+
+
+            }
+
+
+
+            // Fermer le readre : 
+            reader.close();
+            
+
+
+        } 
+        catch(SQLException e1) 
+        {
+            e1.printStackTrace();
+        }
+        catch(IOException e2)
+        {
+            e2.printStackTrace();
 
         }
-        
+
+
     }
 
-    // 
+    /*
+     * ---------------------- Parcour des  Refuges : ------------------------------ 
+    */
 
-    public static void affichageResult(PreparedStatement stmt)
+    public static void afficherRefuge(Connection connection )
     {
-        
+        try{
+            Statement stmt = connection.createStatement();
 
-        // ResultSet res = stmt.executeQuery();
+            // lecture de fichier SQL : 
+            BufferedReader reader = new BufferedReader(new FileReader("src/sql/parcourInfo/afficheRefuge.sql"));
 
-        // while (res.next()) 
-        // {
-        //     String name = res.getString("NOM");
-        //     System.out.println(name);    
-        // }
+            StringBuilder query = new StringBuilder();
+            String line ; 
+
+            ResultSet res = stmt.executeQuery("SELECT 0 FROM Membre");
+
+            while((line = reader.readLine())!=null)
+            {
+                String lineCopie = new String(line);
+
+                if(!lineCopie.trim().isEmpty() && !lineCopie.trim().startsWith("--"))
+                {
+                    // si n'est pas une ligne vide , ni un commentaire:
+                    query.append(line).append(" ");
+                }
+
+
+                if(line.trim().endsWith(";"))
+                {
+                    // il s'agit de la fin d'une Réquette : 
+                    res = stmt.executeQuery(query.toString().replace(";" , " "));
+                
+                    query = new StringBuilder();
+                }
+            }
+
+            System.out.println("nom , dateOuv , dateFreme , nbRepasDispo , nbDormirDispo \n");
+
+            while(res.next())
+            {
+                String nom = res.getString("nom");
+                Date dateOuv = res.getDate("dateOuv");
+                Date dateFreme = res.getDate("dateFerme");
+                int nbDispoRepas = res.getInt("nbRepasDispo");
+                int nbNuitDispo = res.getInt("nbDormirDispo");
+
+                System.out.println(nom + ", " + dateOuv + " ," + dateFreme + " , " + nbDispoRepas + " , " + nbNuitDispo );
+            }
+
+            
+            
+            reader.close();
+            
+        }
+        catch (SQLException e1) 
+        {
+
+            e1.printStackTrace();
+        }
+        catch(IOException e2)        
+        {
+            e2.printStackTrace();
+        }
+
     }
+
+
+    /*
+     *----------------------------------- Parcour des matériels : -----------------------------------------
+    */
+
+    public static void affichageMatériels(Connection connection , Scanner sc)
+    {
+
+    }
+
+
+
+
+/*
+ *
+ * --------------------------------------------------- Réservation : ------------------------------------- 
+ * 
+*/
+
+
+    /*
+     *----------------- Réservation d'une formation: ---------------------------  
+    */
+    public static void réserverFormation(Connection connection , Scanner sc )
+    {
+
+    }
+
+
+    /*
+     *----------------- Réservation de Refuge : ---------------------------  
+    */
+    public static void réserverRefuge(Connection connection , Scanner sc )
+    {
+
+    }
+
+
+    /*
+     *----------------- Réservation d'une formation: ---------------------------  
+    */
+    public static void réserverMatériels(Connection connection , Scanner sc )
+    {
+
+    }
+
+
+
+/*
+ * ------------------------- Droit de l'oublie --------------------------
+*/
+
+public static void oublierMoi(Connection connection)
+{
+
+}
+
     
 }

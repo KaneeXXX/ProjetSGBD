@@ -11,10 +11,8 @@ public class Main
         System.out.println("-------------------------------- Bienvenue dans l'application : gestion des services de l'équipe 1---------------------------------- \n ");
         
 
-        
 
         String url = "jdbc:oracle:thin:@oracle1.ensimag.fr:1521:oracle1";
-        // "jdbc:oracle:thin:@oracle1.ensimag.fr:1521:nom_bd"
         String user="mohameml";
         String password = "mohameml";
     
@@ -39,28 +37,85 @@ public class Main
           Scanner sc = new  Scanner(System.in);
 
 
-            // étape 1 : connexion 
-
+            /* 
+            ------------------ étape 1 : connexion -------------------- 
+            */
             boolean verif = etape1(connection , sc);
 
             if(!verif)
             {
-                //  la connexion ou l'inscription ne march pas bien : 
-                System.exit(1);
+                //  la connexion ou l'inscription ne marche pas bien : 
+                System.exit(0);
             }
 
-            // etpae 2 : choix des fonctionnalités 
+            /*
+             * 
+             *-------------------------------- étpae 2 : choix des fonctionnalités ----------------   
+             */
+
+            System.out.println("------------------------ Régles d'Utilisation -------------------------");
+            
+            System.out.println("Pour le choix entre parcoures des informations ou réservation : ");
+            System.out.println("\t-parcoures des informations ----> tapez 1 ");
+            System.out.println("\t-réservation               ----> tapez 2 ");
+
+            System.out.println("\nPour le choix entre formation/refuges/matériels:");
+            System.out.println("\t-formation --> tapez 1 \n\t-refuges ----> tapez 2\n\t-matériels ---> tapez 3 ");
+            
+            System.out.println("\nExemple : \n\t -si vous tapez 11 ----> parcour des formations ");
+            System.out.println("\t -si vous tapez 21 : ---> réservation des formations ");
+
+
+            System.out.println("\nPour quitter le mini-shell: -----> tapez exit\n");
+
+            System.out.println("\nPour le droit de l'oublie : ----> tapez oublierMoi");
+
+
+            String choix ;
 
             boolean bool = true ;
             
             while(bool)
             {
+                System.out.println("");
+                System.out.print("> ");
+                choix = sc.nextLine();
+
+
+                if(choix.equals("exit"))
+                {
+                    System.out.println("----- Au revoir ------");
+                    bool=false;
+                }
+                else if(choix.equals("oublierMoi"))
+                {
+                    requettes.oublierMoi(connection);
+                }
+                else if(!choix.isEmpty()  && choix.charAt(0)=='1')
+                {
+                    // parcour de informations :
+                    parcourInfo(connection , choix);
+                }
+                else if(!choix.isEmpty()  && choix.charAt(0)=='2')
+                {
+                    // réservation :
+                
+                    réservation(connection , choix);
+                }
+                else 
+                {
+                    // choix invalide : 
+                    
+                    System.err.println(" \n choix invalide ");
+                    System.exit(0);
+                }
 
 
             }
             
 
             connection.close();
+            sc.close();
         
         
         } 
@@ -74,24 +129,28 @@ public class Main
 
 
 
-    public static boolean etape1(Connection connection , Scanner sc ) {
-        
-            
-            
-        System.out.println("Pour connecter à votre compte, tapez 1.");
-        System.out.println("Pour l'inscription, tapez 2.");
+/*
 
+-------------------------- Les fonctionnalités : ------------------------------------------------------------------
 
-        System.out.print("tapez votre chox 1 ou 2 :");
+*/
+
+    public static boolean etape1(Connection connection , Scanner sc ) 
+    {
+        System.out.println("\n----------------- Page de connexion :------------------------\n");
+        System.out.println("Pour connecter à votre compte: ----> tapez 1.");
+        System.out.println("Pour l'inscription :           ----> tapez 2.");
+        System.out.print("\ntapez votre choix 1 ou 2 :");
     
         int choix = sc.nextInt();
+        sc.nextLine();
 
 
         if(choix==1)
         {
             // connexion :
-
-            boolean verif = requettes.connexionMembre(connection);
+            System.out.println("");
+            boolean verif = requettes.connexionMembre(connection , sc);
             return verif;
         }
         else if(choix==2)
@@ -111,98 +170,65 @@ public class Main
 
         }
     
-
-
-
-    
-    
     }
-    
 
 
 
-    public static void etape2(Scanner sc )
+    public static void parcourInfo(Connection connection , String choix )
     {
-        System.out.println("pour le parcoures de : formations/refuges/matériels : tapez 1 ");
-
-
-        System.out.println("pour la réservation : tapez 2");
-    
-
-        System.out.print("tapez votre choix : 1 u 2");
-
-        int choix = sc.nextInt();
-
-
-        if(choix==1)
+        if(choix.equals("11"))
         {
-            // donc il faut choisir entre formations/refuges/matériels  
-
-            System.out.println("pour le choix de : \n \t formation --> tapez 1 \n \t refuges ----> tapez 2  \n \t matériels ---> tapez 3 ");
-
-            System.out.print("tapez votre choix  1 , 2 ou 3 : ");
-
-            int choix2 = sc.nextInt();
-
-
-
-            if(choix2==1)
-            {
-
-            }
-            else if(choix2==2)
-            {
-
-            }
-            else if(choix==3)
-            {
-                //
-            }
-            else 
-            {
-                // choix invalide :
-
-            }
+            // System.out.println(" ici : 11");
+            // parcour des formations : 
+            requettes.afficherFormation(connection);
         }
-        else if (choix==2) 
+        else if(choix.equals("12"))
         {
-            // donc il faut choisir entre formations/refuges/matériels  
+            //System.out.println(" ici : 12");
+            requettes.afficherRefuge(connection);
+        }
+        else if(choix.equals("13"))
+        {
+            System.out.println(" ici : 13");
 
-            System.out.println("pour le choix de réservation  : \n \t formation --> tapez 1 \n \t refuges ----> tapez 2  \n \t matériels ---> tapez 3 ");
-
-            System.out.print("tapez votre choix  1 , 2 ou 3 : ");
-
-            int choix2 = sc.nextInt();
-
-
-
-            if(choix2==1)
-            {
-                // choix de réservation de formation : Uniquemet pour les adhérents 
-
-            }
-            else if(choix2==2)
-            {
-                // choiox de réservation 
-            }
-            else if(choix==3)
-            {
-                //
-            }
-            else 
-            {
-                // choix invalide :
-                
-            }
         }
         else
         {
-            // choxix invalide 
+            System.err.println("choix invalide");
+            System.exit(0);
         }
-    
-    
-    
+
     }
+
+
+    public static void réservation(Connection connection , String choix)
+    {
+        if(choix.equals("21"))
+        {
+            System.out.println(" ici : 21");
+        }
+        else if(choix.equals("22"))
+        {
+            System.out.println(" ici : 22");
+
+        }
+        else if(choix.equals("23"))
+        {
+            System.out.println(" ici : 13");
+
+        }
+        else
+        {
+            System.err.println("choix invalide");
+            System.exit(0);
+        }  
+    }
+
 }
+    
+
+
+
+
 
 
