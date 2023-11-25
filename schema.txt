@@ -115,10 +115,10 @@ object nbRepasReserve
 entity RésérvationFormation {
 * id
 --
-* idAdhérent
-* formationInscrite
+'* idAdhérent
+'* formationInscrite
 '* listeAttente
-'* rang 'si liste d'attente
+* rang 'si liste d'attente
 }
 
 entity LocationMatériel {
@@ -136,14 +136,14 @@ EstDansListeAttente(IdAdherent {pk}, IdFormation {pk}, Rang)
 * IdAdhérent référence Adhérent(idAdhérent)
 * IdFormation référence Formation(idFormation)
 '/
-entity ListeAttente {
+/'entity ListeAttente {
 * idAdhérent
 * idFormation
 * rang
 --
-}
+}'/
 
-RésérvationFormation "0..*" -- "0..1" ListeAttente : AListeAttente >
+'RésérvationFormation "0..*" -- "0..1" ListeAttente : AListeAttente >
 
 Lot "1..*" -- "1..*" Activité : compatibleAvecActivité >
 
@@ -171,10 +171,10 @@ diamond2 .. prix
 
 <> diamond3
 RésérvationRefuge "0..*" -- diamond3 : reserveRepas >
-diamond3 -- "1..*" Repas
+diamond3 -- "0..*" Repas
 diamond3 .. nbRepasReserve
 
 /' Au moins 5 activités dans une formation,
    contrainte au niveau application '/
-Formation "1..*" -- "1..*" : proposeActivitéForm >
+Formation "1..*" -- "1..*" Activité : proposeActivitéForm >
 @enduml
