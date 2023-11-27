@@ -79,8 +79,6 @@ diamond1 .. piecesLouees
 
 entity Arbre {
 * categorie
---
-* categoriePere
 }
 
 Lot "1..*" -- "1..1" Arbre : AUneCategorie >
