@@ -56,8 +56,7 @@
 \att{prixForm}, % prix de la formation
 \att{nbrActivite}, % nombre d'activités dans la formation
 % Activité
-\att{nomAct}, % nom de l'activité
-\att{typeAct}, % type d'activité
+\att{nomActivite}, % nom de l'activité
 % Lot
 \att{marque}, % marque du matériel
 \att{modele}, % modèle du matériel
@@ -68,10 +67,11 @@
 \att{anneePerem}, % année de péremption du matériel
 % LocationMateriel
 \att{idLocationMat}, % id de la location de matériel
-\att{nbPiecesReserv},
+\att{nbPiecesReserv}, % nombre de pièces réservées dans un lot
 \att{dateRecup},
 \att{dateRetour},
 \att{nbPiecesPerdues},
+\att{piecesLouees}, % nombre de pièces louées au total pour une réservation
 % ArbreCategorie
 \att{categorie}, % un noeud fils catégorie
 \att{categoriePere}, % un noeud père catégorie
@@ -99,7 +99,7 @@
 \att{idReservForm}, % id d'une réservation de formation
 % NB : 0/1..* -- 0/1..* => attribut d'association / 
 % Liste d'attente
-\att{rang} % rang de l'adhérent dans la liste d'attente
+\att{rangReservForm} % rang de l'adhérent dans la liste d'attente
 
 \subsection*{Contraintes}
 
@@ -144,6 +144,7 @@ $\rightarrow$
 \att{descriptForm},
 \att{prixForm},
 \att{nbrActivite}
+\att{rangFormation},
 
 % Lot
 \att{marque},
@@ -234,9 +235,10 @@ $\att{nbrPlacesDormir} \geq 0$
 
 $\att{typePayement} \in \{ \texttt{"espèce"}, \texttt{"chèque"}, \texttt{"carte-bleue"} \}$
 
-$\att{typeAct} \in \{ \texttt{"randonnée"}, \texttt{"escalade"}, \texttt{"alpinisme"}, \texttt{"spéologie"}, \texttt{"ski de rando"}, \texttt{"cascade de glace"} \}$
-
 $\att{prixNuite} \geq 0$
+
+% Activite
+$\att{nomActivite} \in \{ \texttt{"randonnée"}, \texttt{"escalade"}, \texttt{"alpinisme"}, \texttt{"spéologie"}, \texttt{"ski de rando"}, \texttt{"cascade de glace"} \}$
 
 % Repas
 $\att{prixRepas} \geq 0$
@@ -248,40 +250,48 @@ $\att{dateDemForm.annee} == \att{anneeForm}$
 
 $\att{dureeForm} \geq 0$
 
-%
-nbrPlacesForm > 0
+$\att{nbrPlacesForm} > 0$
 
-prixForm $\geq$ 0
+$\att{prixForm} \geq 0$
 
-positionAct $\leq$ nbrActivite
+% Lot
+$\att{nbPiecesLot} \geq 0$
 
-nbPièces $\geq$ 0
+$\att{prixPertDegr} \geq 0$
 
-prixPertDegr $\geq$ 0
+$\att{anneePerem} \geq 1970$
 
-dateOuv < dateReservRef < dateFerm
+% Réservation de refuge
+$\att{dateOuv} < \att{dateReservRef} < \att{dateFerm}$
 
-nbrNuitsReserv $\geq$ 0
+$\att{nbrNuitsReserv} \geq 0$
 
-nbrRepasReserv $\geq$ 0
+$\att{nbrRepasReserv} \geq 0$
 
-prixTotalReserv > 0
+$\att{prixTotalReserv} > 0$
 
-dateRetour $<$ dateRecup + 14
+% LocationMateriel
+$\att{dateRetour} < \att{dateRecup} + 14$
 
-& marque, modèle, annéeAchat $\not\rightarrow$ texteInfo
+& %% Contraintes de multiplicités
+% ReserveRefuge
+$\att{idUser} \not\twoheadrightarrow \att{idReservRef}$
 
-marque, modèle, annéeAchat $\twoheadrightarrow$ nomAct
+% ReserveFormation
+$\att{idUser} \not\twoheadrightarrow \att{idReservForm}$
 
-idForm, anneeForm $\twoheadrightarrow$ nomAct
+% LoueMateriel
+$\att{idUser} \not\twoheadrightarrow \att{idLocationMat}$
 
-% proposeActiviteForm
-\att{idForm},
-\att{anneeForm},
-$\twoheadrightarrow$
-\att{nomAct}
+% Lot
+$\att{marque}, \att{modele}, \att{anneeAchat} \not\rightarrow \att{texteInfo}$
 
-& \\
+% EstLoue
+$\att{marque}, \att{modele}, \att{anneeAchat} \not\twoheadrightarrow \att{idLocationMateriel}$
+
+& %% Contraintes contextuelles
+% ReserveRepas
+$\att{nbrNuitsReserv} \neq 0 \lor \att{nbrRepasReserv} \neq 0$
 \end{tabularx}
 \end{adjustbox}
 \end{table}
