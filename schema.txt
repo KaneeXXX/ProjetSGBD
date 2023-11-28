@@ -69,13 +69,7 @@ entity LocationMateriel {
 * nbPiecesPerdues
 }
 
-object piecesLouees
-
-<> diamond1
-
-LocationMateriel "0..*" -- diamond1
-diamond1 -- "1..1" Lot : EstLoue <
-diamond1 .. piecesLouees
+LocationMateriel "0..*" -- "1..1" Lot : EstLoue <
 
 entity Arbre {
 * categorie
