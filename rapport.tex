@@ -322,11 +322,36 @@ Par contre, la création des objets sans titre n'est pas possible pour les attri
 \end{figure}
 
 \section{Schéma relationnel}
-REFUGE(\underline{emailRef}, nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite)
+\subsection*{Entités simples}
+\att{REFUGE}(\att{\underline{emailRef}}, \att{nomRef}, \att{numTel}, \att{secGeo}, \att{dateOuv}, \att{dateFerm}, \att{nbrPlacesRepas}, \att{nbrPlacesDormir}, \att{textePrez}, \att{typePayement}, \att{prixNuite})
 
-REPAS(\underline{typeRepas})
+\att{REPAS}(\att{\underline{typeRepas}})
 
-RESERVATION\_REFUGE(\underline{idReservRef}, dateReservRef, heureReservRef, nbrNuitsReserv, nbrRepasReserv, prixTotalReserv)
+\att{COMTPE\_UTILISATEUR}(\att{\underline{idUser}}, \att{coutReserv}, \att{sommeMaterielAbime}, \att{sommeRemboursee})
+
+\att{MEMBRE}(\att{\underline{emailMem}}, \att{pwdMem}, \att{nomMem}, \att{prenomMem}, \att{adrPostMem})
+
+\att{FORMATION}(\att{\underline{idForm}}, \att{\underline{anneeForm}}, \att{nomForm}, \att{dateDemForm}, \att{dureeForm}, \att{nbrPlacesForm}, \att{descriptForm}, \att{prixForm}, \att{nbrActivite})
+
+\att{RESERVATION\_REFUGE}(\att{\underline{idReservRef}}, \att{dateReservRef}, \att{heureReservRef}, \att{nbrNuitsReserv}, \att{nbrRepasReserv}, \att{prixTotalReserv})
+
+\att{RESERVATION\_FORMATION}(\att{\underline{idReservForm}}, \att{rangReservForm})
+
+\att{}
+
+\subsection*{Sous-types entités}
+
+\subsection*{Entités faibles} % (ssi une unique entité fait référence à une autre)
+
+\subsection*{Associations ternaires}
+
+\subsection*{Associations 1..1}
+
+\subsection*{Associations 0..1}
+
+\subsection*{Associations 0/1..*}
+
+\subsection*{Sous-types d'associations}
 \end{document}
 
 % Local Variables:
