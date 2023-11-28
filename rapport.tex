@@ -10,6 +10,7 @@
 \usepackage{tabularx}
 \usepackage{booktabs}
 \usepackage{adjustbox}
+\usepackage{csquotes}
 
 \AtBeginDocument{\def\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}}
 \newcommand\att[1]{\textnhtt{#1}}
@@ -28,17 +29,7 @@
 \begin{document}
 \maketitle
 \section{Introduction}
-\section{Analyse fonctionnelle}
-Tout au long du projet, on a rencontré des choix difficiles à faire face aux subtilités du problème.
-
-%* Modélisation de l'arbre des catégori
-%* prix repas
-%* adherent 6< sous type de membre :
-%- trois choix : réference (jointure), duplication (accès facile), unification
-%* 
-
-Pour la génération du diagramme entité-association, on a utilisé PlantUML qui est très pratique.
-Par contre, la création des objets sans titre n'est pas possible pour les attributs d'association comme \att{prixRepas}.
+\section{Analyse du problème}
 \subsection*{Propriétés}
 % Refuge
 \att{emailRef}, % email du refuge
@@ -306,6 +297,25 @@ $\att{nbrNuitsReserv} \neq 0 \lor \att{nbrRepasReserv} \neq 0$
 \caption{Table de contraintes}
 \end{table}
 \section{Conception}
+Tout au long du projet, on a rencontré des choix difficiles à faire face aux subtilités du problème.
+
+\begin{itemize}
+\item \textbf{Arbre de catégories}.
+  Vu que dans un arbre, un noeuds fils à un noeud parent unique, on a donc choisi de modéliser cet arbre avec un table \att{Arbre} d'un seul attribut \att{categorie}.
+  On met en place aussi deux associations: \att{AUneCategorie} pour lier l'entité \att{Lot} et \att{Arbre}, et \att{EstParentDe} pour lier \att{Arbre} avec lui-même pour modéliser les relations entre les noeuds.
+\item \textbf{Prix d'un repas}.
+  Chaque refuge propose des repas à des prix différents donc créer un table avec des attributs \att{typeRepas} et \att{prixRepas} est hors du question.
+  Donc on implémente l'attribut \att{prixRepas} comme un attribut d'association \att{ProposeRepas} entre \att{Refuge} et \att{Repas}.
+\item \textbf{Adhérent}.
+  On a remarqué tôt dans le projet que \att{Adherent} pourrait être un sous-type de \att{Membre}.
+  La question est de choisir la bonne implémentation du sous-type.
+  L'implémentation d'une \enquote{Réference} nous oblige de faire une jointure avec \att{Adherent} et \att{Membre} qui n'est pas optimal.
+  Une \enquote{Duplication} est donc choisie à cause de l'accès facile.
+\end{itemize}
+
+Pour la génération du diagramme entité-association, on a utilisé PlantUML qui est très pratique.
+Par contre, la création des objets sans titre n'est pas possible pour les attributs d'association comme \att{prixRepas}.
+
 \begin{figure}[h!]
 \includesvg[inkscapelatex=false, width=\textwidth]{schema}
 \caption{Diagramme entité-association}
