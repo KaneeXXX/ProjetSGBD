@@ -112,6 +112,14 @@ Par contre, la création des objets sans titre n'est pas possible pour les attri
 
 \subsection*{Contraintes}
 
+\section{Schéma relationnel}
+
+REFUGE(\underline{emailRef}, nomRef, numTel, secGeo, dateOuv, dateFerm, nbrPlacesRepas, nbrPlacesDormir, textePrez, typePayement, prixNuite)
+
+REPAS(\underline{typeRepas})
+
+RESERVATION\_REFUGE(\underline{idReservRef}, dateReservRef, heureReservRef, nbrNuitsReserv, nbrRepasReserv, prixTotalReserv)
+
 \begin{table}[h!]
   \tiny
   \begin{adjustbox}{center}
