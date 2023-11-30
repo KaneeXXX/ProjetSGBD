@@ -6,15 +6,15 @@ import packages.requete;
 public class Main
 {
     public static void main(String[] args) {
-        
+    
 
         System.out.println("-------------------------------- Bienvenue dans l'application : gestion des services de l'équipe 1---------------------------------- \n ");
         
 
 
         String url = "jdbc:oracle:thin:@oracle1.ensimag.fr:1521:oracle1";
-        String user="mohameml";
-        String password = "mohameml";
+        String user="chrifmhm";
+        String password = "chrifmhm";
     
         try 
         {
@@ -40,13 +40,14 @@ public class Main
             /* 
             ------------------ étape 1 : connexion -------------------- 
             */
-            boolean verif = etape1(connection , sc);
+            String idUser = etape1(connection , sc);
 
-            if(!verif)
-            {
-                //  la connexion ou l'inscription ne marche pas bien : 
-                System.exit(0);
-            }
+            System.out.println("idUser = " + idUser);
+            // if(!verif)
+            // {
+            //     //  la connexion ou l'inscription ne marche pas bien : 
+            //     System.exit(0);
+            // }
 
             /*
              * 
@@ -94,7 +95,7 @@ public class Main
                 else if(!choix.isEmpty()  && choix.charAt(0)=='1')
                 {
                     // parcour de informations :
-                    parcourInfo(connection , choix);
+                    parcourInfo(connection , choix , sc);
                 }
                 else if(!choix.isEmpty()  && choix.charAt(0)=='2')
                 {
@@ -135,13 +136,15 @@ public class Main
 
 */
 
-    public static boolean etape1(Connection connection , Scanner sc ) 
+    public static String etape1(Connection connection , Scanner sc ) 
     {
         System.out.println("\n----------------- Page de connexion :------------------------\n");
         System.out.println("Pour connecter à votre compte: ----> tapez 1.");
         System.out.println("Pour l'inscription :           ----> tapez 2.");
         System.out.print("\ntapez votre choix 1 ou 2 :");
     
+        String idUser = "" ;
+
         int choix = sc.nextInt();
         sc.nextLine();
 
@@ -150,14 +153,14 @@ public class Main
         {
             // connexion :
             System.out.println("");
-            boolean verif = requete.connexionMembre(connection , sc);
+            boolean verif = requettes.connexionMembre(connection , sc);
             return verif;
         }
         else if(choix==2)
         {
             // inscription :
 
-            boolean bool = requete.inscriptionMembre(connection);
+            boolean bool = requettes.inscriptionMembre(connection);
             return bool ;
         }
         else
@@ -166,15 +169,17 @@ public class Main
 
             System.out.println("choix invalide");
 
-            return false;
 
         }
-    
+        
+
+
+        return idUser ;
     }
 
 
 
-    public static void parcourInfo(Connection connection , String choix )
+    public static void parcourInfo(Connection connection , String choix , Scanner sc )
     {
         if(choix.equals("11"))
         {
@@ -189,8 +194,8 @@ public class Main
         }
         else if(choix.equals("13"))
         {
-            System.out.println(" ici : 13");
-
+            //System.out.println(" ici : 13");
+            requettes.affichageMatériels(connection, sc);
         }
         else
         {
