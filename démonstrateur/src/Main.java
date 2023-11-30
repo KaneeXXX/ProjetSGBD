@@ -1,7 +1,7 @@
 import java.sql.*;
 import java.util.Scanner;
 
-import packages.requettes;
+import packages.requete;
 
 public class Main
 {
@@ -27,7 +27,7 @@ public class Main
             Connection connection =  DriverManager.getConnection(url, user, password);
             
 
-          // Désactiver le mode autocommit pour gérer manuellement la transaction                   
+            // Désactiver le mode autocommit pour gérer manuellement la transaction                   
             connection.setAutoCommit(false);
 
         
@@ -89,7 +89,7 @@ public class Main
                 }
                 else if(choix.equals("oublierMoi"))
                 {
-                    requettes.oublierMoi(connection);
+                    requete.oublierMoi(connection);
                 }
                 else if(!choix.isEmpty()  && choix.charAt(0)=='1')
                 {
@@ -150,14 +150,14 @@ public class Main
         {
             // connexion :
             System.out.println("");
-            boolean verif = requettes.connexionMembre(connection , sc);
+            boolean verif = requete.connexionMembre(connection , sc);
             return verif;
         }
         else if(choix==2)
         {
             // inscription :
 
-            boolean bool = requettes.inscriptionMembre(connection);
+            boolean bool = requete.inscriptionMembre(connection);
             return bool ;
         }
         else
@@ -180,12 +180,12 @@ public class Main
         {
             // System.out.println(" ici : 11");
             // parcour des formations : 
-            requettes.afficherFormation(connection);
+            requete.afficherFormation(connection);
         }
         else if(choix.equals("12"))
         {
             //System.out.println(" ici : 12");
-            requettes.afficherRefuge(connection);
+            requete.afficherRefuge(connection);
         }
         else if(choix.equals("13"))
         {
