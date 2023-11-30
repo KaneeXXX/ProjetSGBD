@@ -76,7 +76,7 @@ entity Arbre {
 }
 
 Lot "1..*" -- "1..1" Arbre : AUneCategorie >
-Arbre "0..1" -- "0..*" Arbre : EstParentDe >
+Arbre "0..1" -- "0..*" Arbre : EstEnfantDe >
 
 entity CompteUtilisateur {
 * idUser
