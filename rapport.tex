@@ -332,17 +332,42 @@ Par contre, la création des objets sans titre n'est pas possible pour les attri
 
 \att{COMTPE\_UTILISATEUR}(\att{\underline{idUser}}, \att{coutReserv}, \att{sommeMaterielAbime}, \att{sommeRemboursee})
 
-\att{MEMBRE}(\att{\underline{emailMem}}, \att{pwdMem}, \att{nomMem}, \att{prenomMem}, \att{adrPostMem})
-
 \att{FORMATION}(\att{\underline{idForm}}, \att{\underline{anneeForm}}, \att{nomForm}, \att{dateDemForm}, \att{dureeForm}, \att{nbrPlacesForm}, \att{descriptForm}, \att{prixForm}, \att{nbrActivite})
-
-\att{RESERVATION\_REFUGE}(\att{\underline{idReservRef}}, \att{dateReservRef}, \att{heureReservRef}, \att{nbrNuitsReserv}, \att{nbrRepasReserv}, \att{prixTotalReserv})
-
-\att{RESERVATION\_FORMATION}(\att{\underline{idReservForm}}, \att{rangReservForm})
 
 \att{ACTIVITE}(\att{nomAct})
 
-\att{LOCATION\_MATERIEL}(\att{\underline{idLocationMat}}, \att{nbPiecesReserv}, \att{dateRecup}, \att{dateRetour}, \att{nbPiecesPerdues})
+\att{ARBRE}(\att{categorie})
+
+\att{MEMBRE}(\att{\underline{emailMem}}, \att{pwdMem}, \att{nomMem}, \att{prenomMem}, \att{adrPostMem}, \att{idUser})
+\begin{itemize}
+\item \att{idUser} référence \att{COMPTE\_UTILISATEUR}(\att{idUser})
+\end{itemize}
+
+\att{RESERVATION\_REFUGE}(\att{\underline{idReservRef}}, \att{dateReservRef}, \att{heureReservRef}, \att{nbrNuitsReserv}, \att{nbrRepasReserv}, \att{prixTotalReserv}, \att{emailRef}, \att{idUser})
+\begin{itemize}
+\item \att{emailRef} référence \att{REFUGE}(\att{emailRef})
+\item \att{idUser} référence \att{COMPTE\_UTILISATEUR}(\att{idUser})
+\end{itemize}
+
+\att{RESERVATION\_FORMATION}(\att{\underline{idReservForm}}, \att{rangReservForm})
+\begin{itemize}
+\item \att{idForm} référence \att{FORMATION}(\att{idForm})
+\item \att{anneeForm} référence \att{FORMATION}(\att{anneeForm})
+\item \att{idUser} référence \att{COMPTE\_UTILISATEUR}(\att{idUser})
+\end{itemize}
+
+\att{LOT}(\att{\underline{marque}}, \att{\underline{modele}}, \att{\underline{anneeAchat}}, \att{nbPiecesLot}, \att{prixPerteDegr}, \att{textInfo}, \att{anneePerem}, \att{categorie})
+\begin{itemize}
+\item \att{categorie} référence \att{ARBRE}(\att{categorie})
+\end{itemize}
+
+\att{LOCATION\_MATERIEL}(\att{\underline{idLocationMat}}, \att{nbPiecesReserv}, \att{dateRecup}, \att{dateRetour}, \att{nbPiecesPerdues}, \att{marque}, \att{modele}, \att{anneeAchat}, \att{idUser})
+\begin{itemize}
+\item \att{marque} référence \att{LOT}(\att{marque})
+\item \att{modele} référence \att{LOT}(\att{modele})
+\item \att{anneeAchat} référence \att{LOT}(\att{anneeAchat})
+\item \att{idUser} référence \att{COMPTE\_UTILISATEUR}(\att{idUser})
+\end{itemize}
 
 \subsection*{Sous-types entités}
 
@@ -356,7 +381,11 @@ Par contre, la création des objets sans titre n'est pas possible pour les attri
 
 \subsection*{Associations 0..1}
 
-\att{EST\_ENFANT\_DE}(\att{\underline{categorie}})
+\att{EST\_ENFANT\_DE}(\att{\underline{categorie}}, \att{categoriePere})
+\begin{itemize}
+\item \att{categorie} référence \att{ARBRE}(\att{categorie})
+\item \att{categoriePere} référence \att{ARBRE}(\att{categorie})
+\end{itemize}
 
 \subsection*{Associations ?..*}
 
