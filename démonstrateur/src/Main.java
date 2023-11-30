@@ -42,6 +42,7 @@ public class Main
             */
             String idUser = etape1(connection , sc);
 
+            System.out.println("idUser = " + idUser);
             // if(!verif)
             // {
             //     //  la connexion ou l'inscription ne marche pas bien : 

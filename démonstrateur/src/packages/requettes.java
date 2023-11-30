@@ -37,7 +37,7 @@ public class requettes
         
         try {
     
-            PreparedStatement stmt = connection.prepareStatement("SELECT COUNT(*) , IdUSER  as count FROM membre WHERE Email=? AND password=? ");
+            PreparedStatement stmt = connection.prepareStatement("SELECT COUNT(*) as count , IdUSER  FROM membre WHERE EMAIlMEMBRE=? AND MDP=? GROUP BY IdUSER");
 
             System.out.print("Entrez votre emial svp : ");
             String emialAvecRetour = sc.nextLine();
@@ -446,7 +446,7 @@ public class requettes
                     System.exit(1);                
                 }
 
-                PreparedStatement stmt = connection.prepareStatement("SELECT nbDormirDispo FROM Dispo WHERE Dispo.email=?");
+               //  PreparedStatement stmt = connection.prepareStatement("SELECT nbDormirDispo FROM Dispo WHERE Dispo.email=?");
                 
                 
                 System.out.print("tapez svp les nombres de nuits :");
