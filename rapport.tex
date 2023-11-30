@@ -315,6 +315,14 @@ Tout au long du projet, on a rencontré des choix difficiles à faire face aux s
   La question est de choisir la bonne implémentation du sous-type.
   L'implémentation d'une \enquote{Réference} nous oblige de faire une jointure avec \att{Adherent} et \att{Membre} qui n'est pas optimal.
   Une \enquote{Duplication} est donc choisie à cause de l'accès facile.
+\item \textbf{Disponibilités d'une refuge à une date}.
+  Un point qui pourrait être le problème plus complexe est de savoir le nombre de places disponibles dans une refuge à une date.
+  Vu qu'on ne stocke pas les places disponibles à chaque jour d'ouverture à une refuge, on a choisi de stocker le nombre total de places disponibles sur la période d'ouverture d'une refuge, et puis calculer les places disponibles à une date choisie par le client.
+  Ce dernier est implémenté par double itération.
+  On itère d'abord sur chaque jour de la période de réservation souhaitée par le client.
+  Ensuite, sur chaque jour, on itère sur toutes les réservations de refuge qui partagent le même jour et on compte le nombre de places qui reste.
+  Si le nombre de places qui reste atteint 0, la période de réservation n'est pas disponible.
+  Si le nombre de places qui reste est strictement positif sur toute la période, la réservation peut s'effectuer pour client.
 \end{itemize}
 
 Pour la génération du diagramme entité-association, on a utilisé PlantUML qui est très pratique.
