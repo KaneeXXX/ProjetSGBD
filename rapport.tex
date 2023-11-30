@@ -321,6 +321,11 @@ Tout au long du projet, on a rencontré des choix difficiles à faire face aux s
   Ensuite, sur chaque jour, on itère sur toutes les réservations de refuge qui partagent le même jour et on compte le nombre de places qui reste.
   Si le nombre de places qui reste atteint 0, la période de réservation n'est pas disponible.
   Si le nombre de places qui reste est strictement positif sur toute la période, la réservation peut s'effectuer pour client.
+\item \textbf{Liste d'attente}.
+  Au début, on a choisi d'implémenter une liste d'attente pour des formations qui n'ont plus de places disponibles.
+  Par contre, cela veut dire que chaque formation aura un table avec deux attributs: le rang sur la liste d'attente et l'identifiant d'utilisateur.
+  C'est évident que ce design entraine des données redondantes.
+  Donc, on a intégré le rang comme attribut dans le table des réservations de formation.
 \end{itemize}
 
 Pour la génération du diagramme entité-association, on a utilisé PlantUML qui est très pratique.
