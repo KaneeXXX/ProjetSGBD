@@ -404,14 +404,14 @@ public class requettes
     */
     public static void réserverRefuge(Connection connection , Scanner sc )
     {
-        System.out.println("Réservation d'une nuit          ------>   tapez 1");
+        System.out.println("Réservation de nuités          ------>   tapez 1");
 
-        System.out.println("Réservation de Repas            ------->  tapez 2");
+        System.out.println("Réservation de repas            ------->  tapez 2");
 
-        System.out.println("Réservation de Repas et nuit    ------->  tapez 3");
+        System.out.println("Réservation de repas et de nuités    ------->  tapez 3");
 
 
-        System.out.print("tapez votre choix 1 , 2 ou 3 : ");
+        System.out.print("Tapez votre choix 1 , 2 ou 3 : ");
 
         int choix = sc.nextInt();
         sc.nextLine();
@@ -419,33 +419,43 @@ public class requettes
 
         if(choix==1)
         {
-
+	/* On souhaite réserver uniquement des nuités */
             try 
             {
-                ResultSet res = executeFileSQL(connection , "");
+            	PreparedStatement stmt;
+            	ResultSet res;
+            	
+            	/* On exécute ls script de création des tables de réservations et de disponiblités */
+            	/*-------------------------------------------------------------------------*/
+                res = executeFileSQL(connection , "../../sql/réserveRefuge.sql");
                 if(res==null)
                 {
-                    System.err.println("Erruer SQL");
+                    System.err.println("Erreur SQL : Echec lors de la création des tables de réservations et de disponiblités");
+                    System.exit(1);                
+                }
+                /*-------------------------------------------------------------------------*/
+                
+                
+                /* On affiche tous les refuges (nom + email) */
+		/*-------------------------------------------------------------------------*/
+                stmt =  connection.prepareStatement("SELECT emailref, nomref FROM Refuge");
+                res = stmt.executeQuery();
+                if(res==null)
+                {
+                    System.err.println("Erreur SQL : Echec lors de la sélection des noms et emails des refuges");
                     System.exit(1);                
                 }
 
-                System.out.print("Tapez l'email du Refuge : ");
-
-                String choixRefuge = sc.nextLine();
-
-
                 PreparedStatement stmt = connection.prepareStatement("SELECT nbDormirDispo FROM Dispo WHERE Dispo.email=?");
                 
-                stmt.setString(1, choixRefuge);
                 
-                ResultSet res2 = stmt.executeQuery();
-
                 System.out.print("tapez svp les nombres de nuits :");
                 
                 int nbNuits = sc.nextInt();
+                stmt.setInt(1, nbNuits);
 
+                ResultSet res2 = stmt.executeQuery();
 
-                
                 int nbDispo = -1 ;
 
                 while(res2.next()) 
@@ -457,7 +467,7 @@ public class requettes
 
                 if(nbDispo==-1)
                 {
-                    System.err.println("Erruer SQL ou Refuge non trouvé ");
+                    System.err.println("Erreur SQL ou Refuge non trouvé ");
                     System.exit(0);
                 }
                 else

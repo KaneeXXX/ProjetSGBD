@@ -11,8 +11,11 @@
 \usepackage{booktabs}
 \usepackage{adjustbox}
 \usepackage{csquotes}
+\usepackage{float}
+\usepackage{enumitem}
 
 \AtBeginDocument{\def\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}}
+\setlist[itemize]{after=\newline}
 \newcommand\att[1]{\textnhtt{#1}}
 
 \title{Rapport du Projet de Bases de Données}
@@ -95,6 +98,7 @@
 \att{nbrNuitsReserv}, % nombre de nuits réservées
 \att{nbrRepasReserv}, % nombre de repas réservés
 \att{prixTotalReserv}, % prix total de la réservation
+\att{nbRepasReserve},
 % Réservation de formation
 \att{idReservForm}, % id d'une réservation de formation
 % NB : 0/1..* -- 0/1..* => attribut d'association / 
@@ -102,10 +106,10 @@
 \att{rangReservForm} % rang de l'adhérent dans la liste d'attente
 
 \subsection*{Contraintes}
-\begin{table}[h!]
+\begin{table}[H]
   \tiny
   \begin{adjustbox}{center}
-\begin{tabularx}{0.9\paperwidth}{>{\raggedright}XXXX}
+\begin{tabularx}{0.98\paperwidth}{>{\raggedright}XXXX}
 \textbf{Dépendances fonctionelles}
 & \textbf{Contraintes de valeur}
 & \textbf{Contraintes de multiplicité}
@@ -293,7 +297,7 @@ $\att{marque}, \att{modele}, \att{anneeAchat} \not\twoheadrightarrow \att{idLoca
 $\att{nbrNuitsReserv} \neq 0 \lor \att{nbrRepasReserv} \neq 0$
 \end{tabularx}
 \end{adjustbox}
-\caption{Table de contraintes}
+% \caption{Table de contraintes}
 \end{table}
 \section{Conception}
 Tout au long du projet, on a rencontré des choix difficiles à faire face aux subtilités du problème.
@@ -329,29 +333,94 @@ Par contre, la création des objets sans titre n'est pas possible pour les attri
 
 \att{COMTPE\_UTILISATEUR}(\att{\underline{idUser}}, \att{coutReserv}, \att{sommeMaterielAbime}, \att{sommeRemboursee})
 
-\att{MEMBRE}(\att{\underline{emailMem}}, \att{pwdMem}, \att{nomMem}, \att{prenomMem}, \att{adrPostMem})
-
 \att{FORMATION}(\att{\underline{idForm}}, \att{\underline{anneeForm}}, \att{nomForm}, \att{dateDemForm}, \att{dureeForm}, \att{nbrPlacesForm}, \att{descriptForm}, \att{prixForm}, \att{nbrActivite})
 
-\att{RESERVATION\_REFUGE}(\att{\underline{idReservRef}}, \att{dateReservRef}, \att{heureReservRef}, \att{nbrNuitsReserv}, \att{nbrRepasReserv}, \att{prixTotalReserv})
+\att{ACTIVITE}(\att{nomAct})
+
+\att{ARBRE}(\att{categorie})
+
+\att{MEMBRE}(\att{\underline{emailMem}}, \att{pwdMem}, \att{nomMem}, \att{prenomMem}, \att{adrPostMem}, \att{idUser})
+\begin{itemize}
+\item \att{idUser} référence \att{COMPTE\_UTILISATEUR}(\att{idUser})
+\end{itemize}
+
+\att{RESERVATION\_REFUGE}(\att{\underline{idReservRef}}, \att{dateReservRef}, \att{heureReservRef}, \att{nbrNuitsReserv}, \att{nbrRepasReserv}, \att{prixTotalReserv}, \att{emailRef}, \att{idUser})
+\begin{itemize}
+\item \att{emailRef} référence \att{REFUGE}(\att{emailRef})
+\item \att{idUser} référence \att{COMPTE\_UTILISATEUR}(\att{idUser})
+\end{itemize}
 
 \att{RESERVATION\_FORMATION}(\att{\underline{idReservForm}}, \att{rangReservForm})
+\begin{itemize}
+\item \att{idForm} référence \att{FORMATION}(\att{idForm})
+\item \att{anneeForm} référence \att{FORMATION}(\att{anneeForm})
+\item \att{idUser} référence \att{COMPTE\_UTILISATEUR}(\att{idUser})
+\end{itemize}
 
-\att{}
+\att{LOT}(\att{\underline{marque}}, \att{\underline{modele}}, \att{\underline{anneeAchat}}, \att{nbPiecesLot}, \att{prixPerteDegr}, \att{textInfo}, \att{anneePerem}, \att{categorie})
+\begin{itemize}
+\item \att{categorie} référence \att{ARBRE}(\att{categorie})
+\end{itemize}
+
+\att{LOCATION\_MATERIEL}(\att{\underline{idLocationMat}}, \att{nbPiecesReserv}, \att{dateRecup}, \att{dateRetour}, \att{nbPiecesPerdues}, \att{marque}, \att{modele}, \att{anneeAchat}, \att{idUser})
+\begin{itemize}
+\item \att{marque} référence \att{LOT}(\att{marque})
+\item \att{modele} référence \att{LOT}(\att{modele})
+\item \att{anneeAchat} référence \att{LOT}(\att{anneeAchat})
+\item \att{idUser} référence \att{COMPTE\_UTILISATEUR}(\att{idUser})
+\end{itemize}
 
 \subsection*{Sous-types entités}
 
-\subsection*{Entités faibles} % (ssi une unique entité fait référence à une autre)
+\att{ADHERENT}(\att{\underline{emailMem}}, \att{pwdMem}, \att{nomMem}, \att{prenomMem}, \att{adrPostMem}, \att{idAdherent})
+\begin{itemize}
+\item \att{emailMem} référence \att{MEMBRE}(\att{emailMem})
+\end{itemize}
 
-\subsection*{Associations ternaires}
+% \subsection*{Entités faibles} % (ssi une unique entité fait référence à une autre)
 
-\subsection*{Associations 1..1}
+% \subsection*{Associations ternaires}
+
+% \subsection*{Associations 1..1}
 
 \subsection*{Associations 0..1}
 
-\subsection*{Associations 0/1..*}
+\att{EST\_ENFANT\_DE}(\att{\underline{categorie}}, \att{categoriePere})
+\begin{itemize}
+\item \att{categorie} référence \att{ARBRE}(\att{categorie})
+\item \att{categoriePere} référence \att{ARBRE}(\att{categorie})
+\end{itemize}
 
-\subsection*{Sous-types d'associations}
+\subsection*{Associations ?..*}
+
+\att{PROPOSE\_REPAS}(\att{\underline{emailRef}}, \att{\underline{typeRepas}}, \att{prixRepas})
+\begin{itemize}
+\item \att{emailRef} référence \att{REFUGE}(\att{emailRef})
+\item \att{typeRepas} référence \att{REPAS}(\att{typeRepas})
+\end{itemize}
+
+\att{RESERVE\_REPAS}(\att{\underline{idReservRef}}, \att{\underline{typeRepas}}, \att{nbRepasRserve})
+\begin{itemize}
+\item \att{idReservRef} référence \att{RESERVATION\_REFUGE}(\att{idReservRef})
+\item \att{typeRepas} référence \att{REPAS}(\att{typeRepas})
+\end{itemize}
+
+\att{PROPOSE\_ACTIVITE\_FORM}(\att{\underline{idForm}}, \att{\underline{anneeForm}}, \att{\underline{nomAct}})
+\begin{itemize}
+\item \att{idForm} référence \att{FORMATION}(\att{idForm})
+\item \att{anneeForm} référence \att{FORMATION}(\att{anneeForm})
+\item \att{nomAct} référence \att{ACTIVITE}(\att{nomAct})
+\end{itemize}
+
+\att{COMPATIBLE\_AVEC\_ACTIVITE}(\att{\underline{marque}}, \att{\underline{modele}}, \att{\underline{anneeAchat}}, \att{\underline{nomAct}})
+\begin{itemize}
+\item \att{marque} référence \att{LOT}(\att{marque})
+\item \att{modele} référence \att{LOT}(\att{modele})
+\item \att{anneeAchat} référence \att{LOT}(\att{anneeAchat})
+\item \att{nomAct} référence \att{ACTIVITE}(\att{nomAct})
+\end{itemize}
+
+% \subsection*{Sous-types d'associations}
 \end{document}
 
 % Local Variables:
