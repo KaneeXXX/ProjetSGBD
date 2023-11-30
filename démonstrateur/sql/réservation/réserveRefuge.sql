@@ -6,7 +6,7 @@ DROP VIEW Dispo;
 CREATE VIEW  Reserve AS 
 SELECT emailref, SUM(Reservation_refuge.nbrNuitsReserv) AS nbrNuitsReservTotal,  SUM(Reservation_refuge.nbrRepasReserv) AS nbrRepasReservTotal
 FROM Refuge, Reservation_refuge 
-WHERE Refuge.emailref = ReserveRefuge.emailref 
+WHERE Refuge.emailref = Reservation_refuge.emailref 
 GROUP BY emailref;
 
 -- On conserve le nombre de disponiblités pour les repas et les nuités
