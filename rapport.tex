@@ -112,8 +112,7 @@
 \begin{tabularx}{0.98\paperwidth}{>{\raggedright}XXXX}
 \textbf{Dépendances fonctionelles}
 & \textbf{Contraintes de valeur}
-& \textbf{Contraintes de multiplicité}
-& \textbf{Contraintes contextuelles} \\
+& \textbf{Contraintes de multiplicité} \\
 \midrule
 %% Dépendances fonctionnelles
 % Refuge
@@ -276,6 +275,9 @@ $\att{prixTotalReserv} > 0$
 % LocationMateriel
 $\att{dateRetour} < \att{dateRecup} + 14$
 
+% ReserveRepas
+$\att{nbrNuitsReserv} \neq 0 \lor \att{nbrRepasReserv} \neq 0$
+
 & %% Contraintes de multiplicités
 % ReserveRefuge
 $\att{idUser} \not\twoheadrightarrow \att{idReservRef}$
@@ -291,10 +293,6 @@ $\att{marque}, \att{modele}, \att{anneeAchat} \not\rightarrow \att{texteInfo}$
 
 % EstLoue
 $\att{marque}, \att{modele}, \att{anneeAchat} \not\twoheadrightarrow \att{idLocationMateriel}$
-
-& %% Contraintes contextuelles
-% ReserveRepas
-$\att{nbrNuitsReserv} \neq 0 \lor \att{nbrRepasReserv} \neq 0$
 \end{tabularx}
 \end{adjustbox}
 % \caption{Table de contraintes}
