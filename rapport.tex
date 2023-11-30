@@ -338,21 +338,25 @@ Par contre, la création des objets sans titre n'est pas possible pour les attri
 
 \att{RESERVATION\_FORMATION}(\att{\underline{idReservForm}}, \att{rangReservForm})
 
-\att{}
+\att{ACTIVITE}(\att{nomAct})
+
+\att{LOCATION\_MATERIEL}(\att{\underline{idLocationMat}}, \att{nbPiecesReserv}, \att{dateRecup}, \att{dateRetour}, \att{nbPiecesPerdues})
 
 \subsection*{Sous-types entités}
 
-\subsection*{Entités faibles} % (ssi une unique entité fait référence à une autre)
+\att{ADHERENT}(\att{\underline{emailMem}}, \att{pwdMem}, \att{nomMem}, \att{prenomMem}, \att{adrPostMem}, \att{idAdherent})
 
-\subsection*{Associations ternaires}
+% \subsection*{Entités faibles} % (ssi une unique entité fait référence à une autre)
 
-\subsection*{Associations 1..1}
+% \subsection*{Associations ternaires}
+
+% \subsection*{Associations 1..1}
 
 \subsection*{Associations 0..1}
 
-\subsection*{Associations 0/1..*}
+\subsection*{Associations ?..*}
 
-\subsection*{Sous-types d'associations}
+% \subsection*{Sous-types d'associations}
 \end{document}
 
 % Local Variables:
