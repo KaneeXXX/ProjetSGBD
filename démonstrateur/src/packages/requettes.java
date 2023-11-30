@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.Scanner;
 import java.util.Date;
+import java.util.HashMap;
 
 
 
@@ -29,12 +30,14 @@ public class requettes
     
     /*
      * ------------------- Connexion : ----------------- 
-     */
-    public static boolean connexionMembre(Connection connection , Scanner sc )
+    */
+    public static String connexionMembre(Connection connection , Scanner sc )
     {
+        String idUser = "";
+        
         try {
     
-            PreparedStatement stmt = connection.prepareStatement("SELECT COUNT(*) as count FROM membre WHERE Email=? AND password=? ");
+            PreparedStatement stmt = connection.prepareStatement("SELECT COUNT(*) , IdUSER  as count FROM membre WHERE Email=? AND password=? ");
 
             System.out.print("Entrez votre emial svp : ");
             String emialAvecRetour = sc.nextLine();
@@ -51,10 +54,11 @@ public class requettes
             ResultSet res = stmt.executeQuery();
             int verif = -1;
 
+
             while (res.next()) 
             {
                 verif = res.getInt("COUNT");  
-
+                idUser =  res.getString("IdUSER");
             
             }
 
@@ -62,28 +66,33 @@ public class requettes
             {
                 System.out.println("Connexion réussie ");
 
-                return true;
+
             }
             else if(verif==0)
             {
                 System.out.println("Invalid Email ou mot de passe .");
 
-                return false;
+
             }
             else
             {
                 System.out.println("");
-                return false;
+
             }
+
+
+
+
 
         } 
         catch (SQLException e) 
         {
 
             e.printStackTrace();
-            return false;
+
         }
 
+        return idUser ;
     }
 
 
@@ -217,6 +226,158 @@ public class requettes
     public static void affichageMatériels(Connection connection , Scanner sc)
     {
 
+        // affichage par nombre de piéces réserves ou par activités :
+        System.out.println("affichag par catégorie -----> tapez 1 ");
+        System.out.println("affichag par activité  -----> tapez 2 ");
+
+
+        System.out.print("Tapez votre choix svp : ");
+
+        int choix = sc.nextInt();
+
+        if(choix==1)
+        {
+
+
+            // l'affichae par Arbre de catégories :
+            try 
+            {
+                Statement stmt = connection.createStatement();
+
+
+                ResultSet res = stmt.executeQuery("SELECT * FROM estparentDe WHERE sousCategorie2='EPI'");                
+                
+
+                int i = 1 ;
+                
+
+                HashMap<Integer , String> dict = new HashMap<>();
+
+
+
+                while (res.next()) 
+                {
+                    String souscategorie = res.getString("souscategorie1");
+                    
+                    System.out.println(souscategorie +" ----->  tapez " + i );
+
+                    
+                    dict.put(i , souscategorie);
+                    i++ ;                    
+
+                    
+
+
+                }
+
+                System.out.println("Si vous confirmez le choix tapez : -1");
+
+
+       
+                
+
+
+
+                
+                
+                
+                boolean bool = true ; 
+
+                
+                int choix2 = 0  ; 
+                int choixPrec = 0 ;
+
+                while(bool)
+                {
+
+                    choixPrec = choix2 ; 
+                    System.out.print("Tapez un nouveau choix ou confirmez (avce -1) : ");
+
+                    choix2 = sc.nextInt();
+                    sc.nextLine();
+
+
+                    if(choix2==-1)
+                    {
+                        bool = false ;
+                    }
+                    else
+                    {
+
+                        if(choix2 > i )
+                        {
+                            System.out.println("Choix invalide");
+                            System.exit(0);
+                        }
+                        
+                        
+
+                        ResultSet res2 = stmt.executeQuery("SELECT * FROM estparentDe WHERE sousCategorie2='"+dict.get(choix2) +"'");
+
+                        if(res2==null)
+                        {
+                            System.out.println("Il n'y apas de sous catégorie de cette catégorie ");
+                        }
+
+
+                        while(res2.next())
+                        {
+                            String souscategorie = res2.getString("souscategorie1");
+                            
+                            if(!dict.containsValue(souscategorie))
+                            {
+                                System.out.println(souscategorie +" ----->  tapez " + i );
+                                dict.put(i , souscategorie);
+
+                                i++;
+                            }
+
+                        }                        
+                    }
+
+                }
+
+
+                ResultSet res3 = stmt.executeQuery("SELECT * FROM Lot WHERE souscategorie='" + dict.get(choixPrec) +"'");
+                
+                System.out.println("marque\t, modele\t , nbpiecesTotale ");
+                while(res3.next())
+                {
+                    String marque = res3.getString("Marque");
+                    String modele  = res3.getString("Modele");
+                    int nbPiecesTotal  = res3.getInt("NBPIECES");
+
+
+
+                    System.out.println(marque + "\t , " + modele + "\t , " + nbPiecesTotal);
+                    
+                }
+
+
+            
+            } 
+            catch (SQLException e) 
+            {
+                e.printStackTrace();
+            }
+
+
+
+
+        }
+        else if(choix==2)
+        {
+            // l'affichage par activités : 
+
+            
+        }
+        else 
+        {
+            System.err.println("choix Invalide ");
+            System.exit(0);
+        }
+
+
     }
 
 
@@ -268,16 +429,23 @@ public class requettes
                     System.exit(1);                
                 }
 
+                System.out.print("Tapez l'email du Refuge : ");
+
+                String choixRefuge = sc.nextLine();
+
+
                 PreparedStatement stmt = connection.prepareStatement("SELECT nbDormirDispo FROM Dispo WHERE Dispo.email=?");
                 
+                stmt.setString(1, choixRefuge);
                 
+                ResultSet res2 = stmt.executeQuery();
+
                 System.out.print("tapez svp les nombres de nuits :");
                 
                 int nbNuits = sc.nextInt();
-                stmt.setInt(1, nbNuits);
 
-                ResultSet res2 = stmt.executeQuery();
 
+                
                 int nbDispo = -1 ;
 
                 while(res2.next()) 
@@ -301,6 +469,8 @@ public class requettes
                     else
                     {
                         // réservation :
+
+                        
 
                     }
                 }
@@ -386,7 +556,7 @@ public static void oublierMoi(Connection connection)
                 }
 
 
-                if(line.trim().endsWith(";"))
+                if(lineCopie.trim().endsWith(";"))
                 {
                     // il s'agit de la fin d'une Réquette : 
                     res = stmt.executeQuery(query.toString().replace(";" , " "));
@@ -412,5 +582,72 @@ public static void oublierMoi(Connection connection)
 
         return null ; // en cas d'errure  
     }
+
+
+
+
+    /*
+     * 
+     * ------------------- fonction pour la parcour dse matériels : 
+     * 
+     */
+
+
+    // public static void parcourArbreMat(Statement stmt , String choix)
+    // {
+
+    //     ResultSet res = stmt.executeQuery("SELECT * FROM estparentDe WHERE sousCategorie2='"+choix+"'");        
+                
+
+    //     int i = 1 ;
+                
+    //             HashMap<Integer , String> dict = new HashMap<>();
+
+    //             while (res.next()) 
+    //             {
+    //                 String souscategorie = res.getString("souscategorie1");
+                    
+    //                 System.out.println(souscategorie +" ----->  tapez" + i );
+    //                 dict.put(i , souscategorie);
+
+    //                 i++ ;                    
+    //             }
+
+    //             System.out.print("Tapez votre choix svp : ");
+                
+    //             int choix2 = sc.nextInt(); 
+
+    //             if(choix2 > i )
+    //             {
+    //                 System.out.println("Choix invalide");
+    //                 System.exit(0);
+    //             }
+                
+
+
+
+    //             if(choix2 > i )
+    //             {
+    //                 System.out.println("Choix invalide");
+    //                 System.exit(0);
+    //             }
+                
+                
+
+    //             ResultSet res2 = stmt.executeQuery("SELECT * FROM estparentDe WHERE sousCategorie2='"+dict.get(choix2) +"'");
+
+
+    //             while(res2.next())
+    //             {
+    //                 String souscategorie = res2.getString("souscategorie1");
+                    
+    //                 System.out.println(souscategorie +" ----->  tapez " + i );
+    //                 dict.put(i , souscategorie);
+
+    //                 i++;
+    //             }
+    // }
+
+
 
 }
