@@ -98,6 +98,7 @@
 \att{nbrNuitsReserv}, % nombre de nuits réservées
 \att{nbrRepasReserv}, % nombre de repas réservés
 \att{prixTotalReserv}, % prix total de la réservation
+\att{nbRepasReserve},
 % Réservation de formation
 \att{idReservForm}, % id d'une réservation de formation
 % NB : 0/1..* -- 0/1..* => attribut d'association / 
@@ -372,6 +373,9 @@ Par contre, la création des objets sans titre n'est pas possible pour les attri
 \subsection*{Sous-types entités}
 
 \att{ADHERENT}(\att{\underline{emailMem}}, \att{pwdMem}, \att{nomMem}, \att{prenomMem}, \att{adrPostMem}, \att{idAdherent})
+\begin{itemize}
+\item \att{emailMem} référence \att{MEMBRE}(\att{emailMem})
+\end{itemize}
 
 % \subsection*{Entités faibles} % (ssi une unique entité fait référence à une autre)
 
@@ -388,6 +392,33 @@ Par contre, la création des objets sans titre n'est pas possible pour les attri
 \end{itemize}
 
 \subsection*{Associations ?..*}
+
+\att{PROPOSE\_REPAS}(\att{\underline{emailRef}}, \att{\underline{typeRepas}}, \att{prixRepas})
+\begin{itemize}
+\item \att{emailRef} référence \att{REFUGE}(\att{emailRef})
+\item \att{typeRepas} référence \att{REPAS}(\att{typeRepas})
+\end{itemize}
+
+\att{RESERVE\_REPAS}(\att{\underline{idReservRef}}, \att{\underline{typeRepas}}, \att{nbRepasRserve})
+\begin{itemize}
+\item \att{idReservRef} référence \att{RESERVATION\_REFUGE}(\att{idReservRef})
+\item \att{typeRepas} référence \att{REPAS}(\att{typeRepas})
+\end{itemize}
+
+\att{PROPOSE\_ACTIVITE\_FORM}(\att{\underline{idForm}}, \att{\underline{anneeForm}}, \att{\underline{nomAct}})
+\begin{itemize}
+\item \att{idForm} référence \att{FORMATION}(\att{idForm})
+\item \att{anneeForm} référence \att{FORMATION}(\att{anneeForm})
+\item \att{nomAct} référence \att{ACTIVITE}(\att{nomAct})
+\end{itemize}
+
+\att{COMPATIBLE\_AVEC\_ACTIVITE}(\att{\underline{marque}}, \att{\underline{modele}}, \att{\underline{anneeAchat}}, \att{\underline{nomAct}})
+\begin{itemize}
+\item \att{marque} référence \att{LOT}(\att{marque})
+\item \att{modele} référence \att{LOT}(\att{modele})
+\item \att{anneeAchat} référence \att{LOT}(\att{anneeAchat})
+\item \att{nomAct} référence \att{ACTIVITE}(\att{nomAct})
+\end{itemize}
 
 % \subsection*{Sous-types d'associations}
 \end{document}
