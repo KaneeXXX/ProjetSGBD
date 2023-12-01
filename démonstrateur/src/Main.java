@@ -2,6 +2,8 @@ import java.sql.*;
 import java.util.Scanner;
 
 import packages.requete;
+import packages.requettes;
+
 
 public class Main
 {
@@ -40,7 +42,7 @@ public class Main
             /* 
             ------------------ étape 1 : connexion -------------------- 
             */
-            String idUser = etape1(connection , sc);
+            int idUser = etape1(connection , sc);
 
             System.out.println("idUser = " + idUser);
             // if(!verif)
@@ -101,7 +103,7 @@ public class Main
                 {
                     // réservation :
                 
-                    réservation(connection , choix);
+                    réservation(connection , choix , sc  , idUser);
                 }
                 else 
                 {
@@ -136,14 +138,14 @@ public class Main
 
 */
 
-    public static String etape1(Connection connection , Scanner sc ) 
+    public static int etape1(Connection connection , Scanner sc ) 
     {
         System.out.println("\n----------------- Page de connexion :------------------------\n");
         System.out.println("Pour connecter à votre compte: ----> tapez 1.");
         System.out.println("Pour l'inscription :           ----> tapez 2.");
         System.out.print("\ntapez votre choix 1 ou 2 :");
     
-        String idUser = "" ;
+        int idUser = -1 ;
 
         int choix = sc.nextInt();
         sc.nextLine();
@@ -153,15 +155,15 @@ public class Main
         {
             // connexion :
             System.out.println("");
-            boolean verif = requettes.connexionMembre(connection , sc);
-            return verif;
+            idUser  = requettes.connexionMembre(connection , sc);
+            
         }
         else if(choix==2)
         {
             // inscription :
 
-            boolean bool = requettes.inscriptionMembre(connection);
-            return bool ;
+            idUser = requettes.inscriptionMembre(connection ,sc);
+
         }
         else
         {
@@ -185,12 +187,12 @@ public class Main
         {
             // System.out.println(" ici : 11");
             // parcour des formations : 
-            requete.afficherFormation(connection);
+            requettes.afficherFormation(connection);
         }
         else if(choix.equals("12"))
         {
             //System.out.println(" ici : 12");
-            requete.afficherRefuge(connection);
+            requettes.afficherRefuge(connection);
         }
         else if(choix.equals("13"))
         {
@@ -206,11 +208,11 @@ public class Main
     }
 
 
-    public static void réservation(Connection connection , String choix)
+    public static void réservation(Connection connection , String choix , Scanner sc , int id )
     {
         if(choix.equals("21"))
         {
-            System.out.println(" ici : 21");
+            requettes.réserverFormation(connection, sc, id);
         }
         else if(choix.equals("22"))
         {

@@ -33,7 +33,7 @@ SELECT * FROM Refuge ;
 
 -- TABLE 
 
-
+DROP TABLE ReserveRefuge ; 
 CREATE TABLE ReserveRefuge
 (
     id INT PRIMARY KEY ,

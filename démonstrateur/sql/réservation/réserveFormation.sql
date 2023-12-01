@@ -1,12 +1,13 @@
-DROP VIEW Reserve ;
+DROP VIEW NbrReservFor ;
 
-CREATE VIEW  Reserve AS 
-SELECT email , SUM(reserverefuge.nbrnuits) AS nbDormirReserv ,  SUM(ReserveRefuge.nbrRepas) AS nbRepasReserv
-FROM Refuge  , ReserveRefuge 
-WHERE Refuge.emailref = ReserveRefuge.emailref 
-GROUP BY email;
+CREATE VIEW NbrReservFor AS 
+SELECT NUMERO , ANNEE , MAX(RANG) as nbMax
+FROM RESERVATION_FORMATION
+GROUP BY NUMERO ,ANNEE ;
 
-CREATE VIEW  Dispo AS 
-SELECT  Refuge.email , refuge.nbrrepas - Reserve.nbRepasReserv AS nbRepasDispo , refuge.nbrdormir - Reserve.nbDormirReserv AS nbDormirDispo 
-FROM Refuge , Reserve
-WHERE Refuge.email = Reserve.email ; 
+
+DROP VIEW NBDISPOFOR ;
+CREATE VIEW NBDISPOFOR AS 
+SELECT Formation.IdFORM  , Formation.ANNEeFORM  , NBrPLACE - NbrReservFor.nbMax as  nbDispo  FROM NbrReservFor , Formation 
+WHERE NbrReservFor.NUMERO = Formation.IdFORM 
+AND NbrReservFor.ANNEE = Formation.ANNEeFORM ;
