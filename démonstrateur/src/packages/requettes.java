@@ -36,28 +36,6 @@ public class requettes
     {
         int idUser = -1;
 
-        // System.out.println("vous êtes membre ou adhérent:\n\t tapez 1 --> membre , \n\t tapez 2 --> adhérent");
-        
-        // int choix = sc.nextInt();
-        // sc.nextLine();
-
-        // String nomTable = "";
-
-
-
-        // if(choix==1)
-        // {
-        //     nomTable = "membre";
-        // }
-        // else if(choix==2)
-        // {
-        //     nomTable = "ADHERENT";
-        // }
-        // else
-        // {
-        //     System.err.println("choix invalide ");
-        //     System.exit(0);
-        // }
 
 
 
@@ -135,17 +113,183 @@ public class requettes
         int choix = sc.nextInt();
         sc.nextLine();
 
-        String nomTable = "";
+
 
 
 
         if(choix==1)
         {
-            nomTable = "membre";
+            // si le choixde l'utilisateur est 1 :
+            try 
+            {
+
+                PreparedStatement stmt = connection.prepareStatement("INSERT INTO membre VALUES (? , ? , ? ,? , ? , ?) ");
+
+
+
+                System.out.print("Entrez votre emial svp : ");
+                String emial = sc.nextLine().replace("\n", "");
+
+                System.out.print("Entrez votre mot de passe svp : ");
+                String password = sc.nextLine().replace("\n", "");
+
+                System.out.print("votre nom svp : ");
+                String nom = sc.nextLine().replace("\n", "");
+
+                System.out.print("Votre prenom svp: ");
+                String prenom = sc.nextLine().replace("\n", "");
+
+                System.out.print("Votre ADrPOST svp: ");
+                String ADrPOST= sc.nextLine().replace("\n", "");
+
+
+                // calculer l'idUser :
+
+                idUser = idUser_(connection);
+
+                Statement stmt2 = connection.createStatement();
+
+                int  row1 = stmt2.executeUpdate("INSERT INTO COMPTE_UTILISATEUR(IdUSER) VALUES ("+ idUser+")");
+
+                if(row1!=1)
+                {
+
+                    System.out.println("Inscription échouée");
+                }
+                // qyery :
+                
+                stmt.setString(1, emial);
+                stmt.setString(2, password);
+                stmt.setString(3, nom);
+                stmt.setString(4, prenom);
+                stmt.setString(5, ADrPOST);
+                stmt.setInt(6,idUser);
+
+
+                
+
+                int row = stmt.executeUpdate();
+
+                if(row==1)
+                {
+                    System.out.println("Inscription réussie");
+                    connection.commit();
+                }
+                else
+                {
+                    System.out.println("Inscription échouée");
+                    connection.rollback();
+                }
+
+
+            } 
+            catch(SQLException e) 
+            {
+                    System.out.println("Inscription échouée");
+                    e.printStackTrace();
+                    // connection.rollback();            
+            }
+
         }
         else if(choix==2)
         {
-            nomTable = "ADHERENT";
+
+            try 
+            {
+
+                PreparedStatement stmt = connection.prepareStatement("INSERT INTO membre VALUES (? , ? , ? ,? , ? , ?) ");
+
+
+
+                System.out.print("Entrez votre emial svp : ");
+                String emial = sc.nextLine().replace("\n", "");
+
+                System.out.print("Entrez votre mot de passe svp : ");
+                String password = sc.nextLine().replace("\n", "");
+
+                System.out.print("votre nom svp : ");
+                String nom = sc.nextLine().replace("\n", "");
+
+                System.out.print("Votre prenom svp: ");
+                String prenom = sc.nextLine().replace("\n", "");
+
+                System.out.print("Votre ADrPOST svp: ");
+                String ADrPOST= sc.nextLine().replace("\n", "");
+
+
+                // calculer l'idUser :
+
+                idUser = idUser_(connection);
+
+                Statement stmt2 = connection.createStatement();
+
+                int  row1 = stmt2.executeUpdate("INSERT INTO COMPTE_UTILISATEUR(IdUSER) VALUES ("+ idUser+")");
+
+                if(row1!=1)
+                {
+
+                    System.out.println("Inscription échouée");
+                }
+                // qyery :
+                
+                stmt.setString(1, emial);
+                stmt.setString(2, password);
+                stmt.setString(3, nom);
+                stmt.setString(4, prenom);
+                stmt.setString(5, ADrPOST);
+                stmt.setInt(6,idUser);
+
+
+                
+
+                int row = stmt.executeUpdate();
+
+                if(row==1)
+                {
+                    System.out.println("Inscription réussie");
+                    connection.commit();
+                }
+                else
+                {
+                    System.out.println("Inscription échouée");
+                    connection.rollback();
+                }
+                // l'ajout du membre dans la table des adhérant :
+                PreparedStatement stmt3 = connection.prepareStatement("INSERT INTO ADHERENT VALUES (? , ? , ? , ? ,? , ? , ?) ");
+                // qyery :
+                
+                int idadh = idAdh_(connection);
+
+                stmt3.setInt(1 , idadh);
+                stmt3.setString(2, emial);
+                stmt3.setString(3, password);
+                stmt3.setString(4, nom);
+                stmt3.setString(5, prenom);
+                stmt3.setString(6, ADrPOST);
+                stmt3.setInt(7,idUser);
+
+
+                int row3 = stmt3.executeUpdate();
+
+
+                if(row3!=1)
+                {
+                    System.out.println("échouée lors de l'ajout dans la table ADHERENT");
+                    connection.rollback();
+                }
+
+                connection.commit();
+
+
+            } 
+            catch(SQLException e) 
+            {
+                    System.out.println("Inscription échouée");
+                    e.printStackTrace();
+                    // connection.rollback();            
+            }
+
+
         }
         else
         {
@@ -155,60 +299,9 @@ public class requettes
 
 
 
-        try 
-        {
-            PreparedStatement stmt = connection.prepareStatement("INSERT INTO membre VALUES (? , ? , ? ,? , ? , ?) ");
 
 
-
-            System.out.print("Entrez votre emial svp : ");
-            String emial = sc.nextLine().replace("\n", "");
-
-            System.out.print("Entrez votre mot de passe svp : ");
-            String password = sc.nextLine().replace("\n", "");
-
-            System.out.print("votre nom svp : ");
-            String nom = sc.nextLine().replace("\n", "");
-
-            System.out.print("Votre prenom svp: ");
-            String prenom = sc.nextLine().replace("\n", "");
-
-            System.out.print("Votre ADrPOST svp: ");
-            String ADrPOST= sc.nextLine().replace("\n", "");
-
-
-
-            // 
-            stmt.setString(1, emial);
-            stmt.setString(2, password);
-            stmt.setString(3, nom);
-            stmt.setString(4, prenom);
-            stmt.setString(5, ADrPOST);
-            stmt.setInt(6,idUser);
-
-
-            
-
-            int res = stmt.executeUpdate();
-
-            if(res==1)
-            {
-                System.out.println("Inscription réussie");
-                connection.commit();
-            }
-            else
-            {
-                System.out.println("Inscription échouée");
-                connection.rollback();
-            }
-
-
-        } 
-        catch(SQLException e) 
-        {
-        }
-
-
+    
 
         return idUser;
 
@@ -245,18 +338,18 @@ public class requettes
             }
 
             // affichage de résultat : 
-            System.out.println("Anneé , numéro , nom , , activités , dateDém , Duree , nbPlaceRes ");
+            System.out.println("Anneé  \t \tnuméro    nom  \t activités   dateDém  \t Duree  nbPlaceRes ");
 
             while(res.next())
             {
-               int  annee = res.getInt("annee");
-               int numero = res.getInt("numero");
+               Date  annee = res.getDate("anneeFORM");
+               int numero = res.getInt("IDFORM");
                String nom = res.getString("nom");
-               String activté = res.getString("nomActivité");
+               String activté = res.getString("nomActivite");
                Date datedem = res.getDate("dateDem");
                int duree = res.getInt("duree");
                int nbRestant = res.getInt("nbrRestant");
-               System.out.println(annee + ",  " + numero + " , " + nom + ", " + activté + " , " + datedem + " , " + duree + " , " + nbRestant );
+               System.out.println(annee + "\t  " + numero + "\t   " + nom + "\t  " + activté + "\t   " + datedem + "\t   " + duree + "\t   " + nbRestant );
 
 
 
@@ -304,7 +397,7 @@ public class requettes
                 int nbDispoRepas = res.getInt("nbRepasDispo");
                 int nbNuitDispo = res.getInt("nbDormirDispo");
 
-                System.out.println(nom + ", " + dateOuv + " ," + dateFreme + " , " + nbDispoRepas + " , " + nbNuitDispo );
+                System.out.println(nom + ", " + dateOuv + " ," + dateFreme + " , " + nbDispoRepas + " , \t\t" + nbNuitDispo );
             }
 
             
@@ -376,14 +469,6 @@ public class requettes
                 System.out.println("Si vous confirmez le choix tapez : -1");
 
 
-       
-                
-
-
-
-                
-                
-                
                 boolean bool = true ; 
 
                 
@@ -441,20 +526,48 @@ public class requettes
                 }
 
 
-                ResultSet res3 = stmt.executeQuery("SELECT * FROM Lot WHERE souscategorie='" + dict.get(choixPrec) +"'");
+                ResultSet res3 = stmt.executeQuery("SELECT Lot.marque , Lot.modele , Lot.anneeachat , lot.NBPIECES , souscategorie , Lot.NBPIECES  as nbDispo "+"FROM Lot WHERE souscategorie='" + dict.get(choixPrec) +"' AND ( (marque , modele , anneeAchat) NOT IN (SELECT marque , modele , anneeAchat FROM LOCATION_MATERIEL ))"
+                                );
                 
-                System.out.println("marque\t, modele\t , nbpiecesTotale ");
+
+                // System.out.println("------------- voici les matériels de sous catégortie de votre choix qui ne sont pas encore réserver :-----------------");
+
+                System.out.println("marque\t,modele\t,nbpiecesTotale\t,nbpiecesDispo ");
                 while(res3.next())
                 {
                     String marque = res3.getString("Marque");
                     String modele  = res3.getString("Modele");
                     int nbPiecesTotal  = res3.getInt("NBPIECES");
+                    int nbPieces  = res3.getInt("nbDispo");
 
 
 
-                    System.out.println(marque + "\t , " + modele + "\t , " + nbPiecesTotal);
+
+                    System.out.println(marque + "\t," + modele + "\t ," + nbPiecesTotal + "\t,\t" + nbPieces);
                     
                 }
+
+
+                executeFileSQL(connection , "sql/parcourInfo/afficheMatériels.sql");
+
+
+                ResultSet res4 = stmt.executeQuery("SELECT * FROM MatDispo WHERE souscategorie='"+dict.get(choixPrec) +"'");
+                while(res4.next())
+                {
+                    String marque = res4.getString("Marque");
+                    String modele  = res4.getString("Modele");
+                    int nbPiecesTotal  = res4.getInt("NBPIECES");
+                    int nbPieces  = res4.getInt("nbDispo");     
+
+
+
+
+                    System.out.println(marque + "\t," + modele + "\t," + nbPiecesTotal  + "\t,\t"+ nbPieces);
+                    
+                }
+
+
+
 
 
             
@@ -471,6 +584,66 @@ public class requettes
         else if(choix==2)
         {
             // l'affichage par activités : 
+
+
+            try
+            {
+                Statement stmt = connection.createStatement();
+
+
+                ResultSet res1 = stmt.executeQuery("SELECT * FROM ACtivite");
+
+                int i = 1  ;
+
+                System.out.println("choix de l'activite :");
+                HashMap<Integer , String> dict = new HashMap<Integer , String>();
+
+
+                while(res1.next())
+                {
+                    String nomAc = res1.getString("NOMACTIVITE");
+
+                    System.out.println("\n\t"+nomAc+"------>"+i);
+                    dict.put(i,nomAc);
+                    i++;
+                }
+
+
+                int choixAc = sc.nextInt();
+                sc.nextLine();
+
+                executeFileSQL(connection , "sql/parcourInfo/afficheMatériels.sql");
+                
+
+                System.out.println("marque\t,modele\t,nbpiecesTotale\t,nbpiecesDispo ");
+
+
+                ResultSet res2 = stmt.executeQuery
+                (
+                "SELECT Matdispo.marque , MAtDispo.modele , MatDispo.anneeachat, NBPIECES  , nbdispo from MatDispo , COMPATIBLE_AVEC_ACTIVITE "+
+                "WHERE  MatDispo.marque = COMPATIBLE_AVEC_ACTIVITE.marque "+
+                "AND MatDispo.modele = COMPATIBLE_AVEC_ACTIVITE.modele "+ 
+                "AND MAtDispo.anneeachat = COMPATIBLE_AVEC_ACTIVITE.anneeachat "+
+                "AND  nomactivite='"+dict.get(choixAc)+"'"
+                );
+
+                while(res2.next())
+                {
+                    String marque = res2.getString("Marque");
+                    String modele  = res2.getString("Modele");
+                    int nbPiecesTotal  = res2.getInt("NBPIECES");
+                    int nbPieces  = res2.getInt("nbDispo");     
+
+
+
+
+                    System.out.println(marque + "\t," + modele + "\t," + nbPiecesTotal  + "\t,\t"+ nbPieces);
+                }
+            }
+            catch(SQLException e)
+            {
+                e.printStackTrace();
+            }
 
             
         }
@@ -529,7 +702,7 @@ public class requettes
             if(s!=1) 
             {
                 System.err.println("Désolé vous n'êtes pas adhérant ");
-                  System.exit(1);  
+                  System.exit(0);  
             }
 
             
@@ -586,10 +759,8 @@ public class requettes
             {
                 nbReservFor = res.getInt("nbDispo");
 
-                // System.out.println("nbDispo = "+nbReservFor);
             }
 
-            System.out.println("nbReserv = "+nbReservFor);
             if(nbReservFor >0 )
             {
                 // donc on peut réserver une formation :
@@ -599,7 +770,6 @@ public class requettes
                 int idReservFor = -1  ;
 
 
-                System.out.println("je suis la à res3");
                 while (res3.next()) 
                 {
                     idReservFor = res3.getInt("count");    
@@ -611,7 +781,6 @@ public class requettes
                 
                 
                 
-                System.out.println("je suis la à res4");
 
                 while (res4.next()) 
                 {
@@ -621,8 +790,6 @@ public class requettes
                 idReservFor++;
                 rang++; 
 
-                System.out.println("idResreevFor = "+idReservFor);
-                System.out.println("rang = "+rang);
                 String query = String.format("INSERT INTO RESERVATION_FORMATION VALUES (%d ,%d ,%d , %d ,%s)",idReservFor,rang ,id,numeroFor, date);
 
                 int row = stmt.executeUpdate(query);
@@ -690,8 +857,8 @@ public class requettes
             	
             	/* On exécute ls script de création des tables de réservations et de disponiblités */
             	/*-------------------------------------------------------------------------*/
-                res =             // TODO: handle exception
-executeFileSQL(connection , "../../sql/réserveRefuge.sql");
+                res = executeFileSQL(connection , "../../sql/réserveRefuge.sql");
+                
                 if(res==null)
                 {
                     System.err.println("Erreur SQL : Echec lors de la création des tables de réservations et de disponiblités");
@@ -701,7 +868,7 @@ executeFileSQL(connection , "../../sql/réserveRefuge.sql");
                 
                 
                 /* On affiche tous les refuges (nom + email) */
-		/*-------------------------------------------------------------------------*/
+		    /*-------------------------------------------------------------------------*/
                 stmt =  connection.prepareStatement("SELECT emailref, nomref FROM Refuge");
                 res = stmt.executeQuery();
                 if(res==null)
@@ -782,30 +949,151 @@ executeFileSQL(connection , "../../sql/réserveRefuge.sql");
     /*
      *----------------- Réservation d'une formation: ---------------------------  
     */
-    public static void réserverMatériels(Connection connection , Scanner sc )
+    public static void réserverMatériels(Connection connection , Scanner sc , int id )
     {
+        
+
+        // verifiction que : USER est un adhérant :
+        
+        try
+        {
+
+
+            Statement stmt = connection.createStatement();
+
+            ResultSet res = stmt.executeQuery("SELECT idUSER FROM ADHERENT ");
+        
+            
+            int s = 0 ;
+
+            while (res.next()) 
+            {
+                int idadh = res.getInt("idUSER"); 
+                
+                
+                if(idadh==id)
+                {
+                    s+=1;
+                    break;
+                    
+                }
+            }
+
+
+            if(s!=1) 
+            {
+                System.err.println("Désolé vous n'êtes pas adhérant ");
+                  System.exit(0);  
+            }
+
+            
+
+        
+        
+        
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+
         // réservation matériels : 
-        System.out.println("le nombre de piéces à rserver :");
+        System.out.print("le nombre de piéces à rserver :");
 
         int nb = sc.nextInt() ; 
         sc.nextLine(); // pour le \n 
 
-        System.out.println("la date de réservation sous la forme DD-MM-YYYY : ");
+        System.out.print("la date de réservation sous la forme YYYY-MM-DD : ");
         String dateRéserv = sc.nextLine();
 
-        System.out.println("la date de récupération sous la forme DD-MM-YYYY : ");
+        System.out.print("la date de récupération sous la forme YYYY-MM-DD : ");
         String dateRécup = sc.nextLine();
 
+        System.out.println("le Lot que voulez vous réservez :");
+        
+        System.out.print("\tmarque :");
+        String marque = sc.nextLine();
+
+        System.out.print("\tmodele :");
+        String modele = sc.nextLine();
+
+        System.out.print("\tannee d'achat(2022 ..) :");
+        String anneeAchat = sc.nextLine();
+
+ 
+        String annee = "TO_DATE('"+anneeAchat+"01-01' , 'YYYY-MM-DD')";
+
+
         try {
-    
+            
             Statement stmt = connection.createStatement(); 
+
+
+            /*-------------- verification de disponibilités : --------------  */
+            
+            executeFileSQL(connection , "sql/parcourInfo/afficheMatériels.sql");
+
+
+
             
 
+            Statement stmt2 = connection.createStatement();
 
-            // on récupere le nombre des piéces disponibbles entre le deux date : 
-            ResultSet res  = stmt.executeQuery("SELECT COUNT(*) FROM "); 
+            String query2 = String.format("SELECT  nbDispo FROM MatDispo  WHERE marque ='%s' AND modele ='%s' AND anneeachat =%s" , marque , modele , annee);
 
 
+
+
+
+            ResultSet res0 = stmt2.executeQuery(query2);
+
+            int nbdispo = 0 ;
+
+            while(res0.next())
+            {
+                nbdispo = res0.getInt("nbDispo");
+            }
+
+
+
+
+            if(nbdispo < nb)
+            {
+                System.out.println("Désolé, le nombre disponible est inférieur au nombre que vous voulez");
+
+            }
+            else
+            {
+                
+                ResultSet res1 = stmt.executeQuery("SELECT COUNT(*) as count FROM LOCATION_MATERIEL");
+
+                int idLoc = 1 ;
+                while(res1.next())
+                {
+                    idLoc+=res1.getInt("count");
+                }
+
+                String dateR = "TO_DATE('"+dateRéserv+"', 'YYYY-MM-DD')";
+                String dateRe = "TO_DATE('"+dateRécup+"', 'YYYY-MM-DD')";
+
+                String query = String.format("INSERT INTO LOCATION_MATERIEL VALUES (%d , %d ,%d ,%s ,%s , %d , '%s' ,'%s' , %s) " , 
+                            idLoc , id , nb ,dateR , dateRe , 0 , marque , modele , annee);
+
+                int row = stmt.executeUpdate(query);
+
+                if(row!=1)
+                {
+                    System.out.println("réservation échouée");
+                    connection.rollback();
+                }
+                else if(row==1)
+                {
+                System.out.println("réservation bien pasée");
+                connection.commit();
+
+            }
+            }
 
 
 
@@ -825,8 +1113,113 @@ executeFileSQL(connection , "../../sql/réserveRefuge.sql");
  * ------------------------- Droit de l'oublie --------------------------
 */
 
-public static void oublierMoi(Connection connection)
+public static void oublierMoi(Connection connection , int id )
 {
+    // est ce que il s'agit d'un adhérant ou non : 
+
+        // verifiction que : USER est un adhérant :
+        
+        boolean estADH = false ;
+        try
+        {
+
+
+            Statement stmt = connection.createStatement();
+
+            ResultSet res = stmt.executeQuery("SELECT idUSER FROM ADHERENT ");
+        
+            
+            int s = 0 ;
+
+            while (res.next()) 
+            {
+                int idadh = res.getInt("idUSER"); 
+                
+                
+                if(idadh==id)
+                {
+                    s+=1;
+                    break;
+                    
+                }
+            }
+
+
+            if(s!=1) 
+            {
+                estADH = false ;
+            }
+            else
+            {
+                estADH = true ;
+            }
+
+            
+
+        
+        
+        
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        } 
+
+
+
+        try
+        {
+            Statement stmt = connection.createStatement();
+
+
+            int row = stmt.executeUpdate("DELETE FROM MEMBRE WHERE idUSER="+id);
+
+            if(row==1)
+            {
+                System.out.println("DROIT de l'Oublie : bien paseé ");
+                connection.commit();
+            }
+            else
+            {
+                System.out.println("----------- Erreur ------------");
+                connection.rollback();
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+
+
+        if(estADH)
+        {
+        try
+        {
+            Statement stmt = connection.createStatement();
+
+
+            int row = stmt.executeUpdate("DELETE FROM ADHERENT WHERE idUSER="+id);
+
+            if(row==1)
+            {
+                System.out.println("DROIT de l'Oublie : bien paseé ");
+                connection.commit();
+            }
+            else
+            {
+                System.out.println("----------- Erreur ------------");
+                connection.rollback();
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+
+        }
+
 
 }
 
@@ -893,99 +1286,32 @@ public static void oublierMoi(Connection connection)
 
 
     /*
-     * 
-     * ------------------- fonction pour la parcour dse matériels : 
-     * 
-     */
-
-
-    // public static void parcourArbreMat(Statement stmt , String choix)
-    // {
-
-    //     ResultSet res = stmt.executeQuery("SELECT * FROM estparentDe WHERE sousCategorie2='"+choix+"'");        
-                
-
-    //     int i = 1 ;
-                
-    //             HashMap<Integer , String> dict = new HashMap<>();
-
-    //             while (res.next()) 
-    //             {
-    //                 String souscategorie = res.getString("souscategorie1");
-                    
-    //                 System.out.println(souscategorie +" ----->  tapez" + i );
-    //                 dict.put(i , souscategorie);
-
-    //                 i++ ;                    
-    //             }
-
-    //             System.out.print("Tapez votre choix svp : ");
-                
-    //             int choix2 = sc.nextInt(); 
-
-    //             if(choix2 > i )
-    //             {
-    //                 System.out.println("Choix invalide");
-    //                 System.exit(0);
-    //             }
-                
-
-
-
-    //             if(choix2 > i )
-    //             {
-    //                 System.out.println("Choix invalide");
-    //                 System.exit(0);
-    //             }
-                
-                
-
-    //             ResultSet res2 = stmt.executeQuery("SELECT * FROM estparentDe WHERE sousCategorie2='"+dict.get(choix2) +"'");
-
-
-    //             while(res2.next())
-    //             {
-    //                 String souscategorie = res2.getString("souscategorie1");
-                    
-    //                 System.out.println(souscategorie +" ----->  tapez " + i );
-    //                 dict.put(i , souscategorie);
-
-    //                 i++;
-    //             }
-    // }
-
-
-
-    /*
      * ---------------- Calcule le idUser ------------------
      */
-    public static int idUser(Connection connection)
+    public static int idUser_(Connection connection)
     {
-        int iduser = 0 ;
+        int iduser = 1 ;
 
         try
         {
             Statement stmt2 = connection.createStatement() ;
 
-            ResultSet res0 = stmt2.executeQuery("SELECT COUNT(*) as count FROM MEMBRE");
-            ResultSet res1 = stmt2.executeQuery("SELECT COUNT(*) as count FROM ADHERENT");
+            ResultSet res0 = stmt2.executeQuery("SELECT COUNT(*) as count FROM COMPTE_UTILISATEUR");
+            // ResultSet res1 = stmt2.executeQuery("SELECT COUNT(*) as count FROM ADHERENT");
 
 
-            int nbUser = 0 ;
+            
 
             while(res0.next())
             {
-                nbUser += res0.getInt("count");
+                iduser += res0.getInt("count");
             }
 
-            while(res1.next())
-            {
-                nbUser += res1.getInt("count");
-            }
+            // while(res1.next())
+            // {
+            //     nbUser += res1.getInt("count");
+            // }
 
-                
-                
-            iduser = nbUser +1 ;
         }
         catch(SQLException e)
         {
@@ -997,6 +1323,45 @@ public static void oublierMoi(Connection connection)
 
 
         return iduser ;
+    }
+
+
+
+    public static int idAdh_(Connection connection)
+    {
+        int id = 1 ;
+
+        try
+        {
+            Statement stmt2 = connection.createStatement() ;
+
+            ResultSet res0 = stmt2.executeQuery("SELECT COUNT(*) as count FROM ADHERENT");
+            // ResultSet res1 = stmt2.executeQuery("SELECT COUNT(*) as count FROM ADHERENT");
+
+
+            
+
+            while(res0.next())
+            {
+                id += res0.getInt("count");
+            }
+
+            // while(res1.next())
+            // {
+            //     nbUser += res1.getInt("count");
+            // }
+
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+
+
+
+
+        return id ;
     }
 
 

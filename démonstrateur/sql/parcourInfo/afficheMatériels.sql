@@ -1,25 +1,19 @@
-DROP VIEW matLouee ; 
-
-
-CREATE VIEW matLouee AS 
-SELECT marque , modele , anneeAchat , SUM(nbrPiecesLouees) as nbLouee FROM Location_MATERIEL , Lot   
-WHERE Lot.marque =  Location_MATERIEL.marque 
-AND Lot.modele = Location_MATERIEL.modele 
-AND Lot.anneeAchat = Location_MATERIEL.anneeAchat
-GROUP BY marque , modele , anneeAchat  ;
+DROP VIEW MatReserve ;
+CREATE VIEW MatReserve AS 
+SELECT marque , modele , anneeachat , SUM(NbPIECEsRESERV) AS nbReserve FROM LOCATION_MATERIEL 
+GROUP BY marque , modele , anneeachat ;
 
 
 
-CREATE VIEW DispoMat AS 
-
-SELECT Lot.marque , Lot.modele , Lot.anneeAchat , Lot.nbPieces - matLouee.nbLouee as nbDispo  FROM  matLouee , Lot   
-WHERE Lot.marque =  matLouee.marque 
-AND Lot.modele = matLouee.modele 
-AND Lot.anneeAchat = matLouee.anneeAchat
-GROUP BY marque , modele , anneeAchat ; 
 
 
-
-SELECT marque , annee , nbDispo FROM DispoMat WHERE 
+DROP VIEW MatDispo;
+CREATE VIEW MatDispo AS 
+SELECT Lot.marque , Lot.modele , Lot.anneeachat , lot.NBPIECES , souscategorie , Lot.NBPIECES -  nbReserve as nbDispo
+FROM Lot,MatReserve 
+WHERE Lot.marque = MatReserve.marque 
+AND Lot.modele = MatReserve.modele 
+AND Lot.anneeachat = MatReserve.anneeachat 
+;
 
 

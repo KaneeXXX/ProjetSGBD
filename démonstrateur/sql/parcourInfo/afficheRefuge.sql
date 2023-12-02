@@ -3,11 +3,11 @@
 DROP VIEW Reserve ;
 
 CREATE VIEW  Reserve AS 
-SELECT email , SUM(reserverefuge.nbrnuits) AS nbDormirReserv ,  SUM(ReserveRefuge.nbrRepas) AS nbRepasReserv
-FROM Refuge  , ReserveRefuge 
-WHERE Refuge.email = ReserveRefuge.idRefuge 
-GROUP BY email;
+SELECT Refuge.EMAIlREF , SUM(RESERVATION_REFUGE.NBrNUITS) AS nbDormirReserv ,  SUM(RESERVATION_REFUGE.NBrREPAsRESERVE) AS nbRepasReserv
+FROM Refuge  , RESERVATION_REFUGE 
+WHERE Refuge.EMAIlREF = RESERVATION_REFUGE.EMAIlREF 
+GROUP BY Refuge.EMAIlREF;
 
-SELECT  nom , dateOuv , dateFerme , refuge.nbrrepas - Reserve.nbRepasReserv AS nbRepasDispo , refuge.nbrdormir - Reserve.nbDormirReserv AS nbDormirDispo 
+SELECT  nom , dateOuv , DATEFERME , refuge.NBrREPAS - Reserve.nbRepasReserv AS nbRepasDispo , refuge.NBNUIT - Reserve.nbDormirReserv AS nbDormirDispo 
 FROM Refuge , Reserve
-WHERE Refuge.email = Reserve.email ; 
+WHERE Refuge.EMAIlREF = Reserve.EMAIlREF ; 

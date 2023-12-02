@@ -92,7 +92,7 @@ public class Main
                 }
                 else if(choix.equals("oublierMoi"))
                 {
-                    requete.oublierMoi(connection);
+                    requettes.oublierMoi(connection , idUser);
                 }
                 else if(!choix.isEmpty()  && choix.charAt(0)=='1')
                 {
@@ -221,7 +221,7 @@ public class Main
         }
         else if(choix.equals("23"))
         {
-            System.out.println(" ici : 13");
+            requettes.réserverMatériels(connection , sc , id);
 
         }
         else
