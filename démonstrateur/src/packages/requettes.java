@@ -950,7 +950,7 @@ public class requettes
                 boolean previousOk = true;
                 for(int i = 0; previousOk && i < nbNuits; i++)
                 {
-                    stmt = connection.prepareStatement("SELECT COUNT(*) as COUNT, FROM Reservation_refuge WHERE emailref=? AND date_reservation <= ? AND DATEADD(day, ?, date_reservation) <= ? AND NBrREPAsRESERVE > 0 ");
+                    stmt = connection.prepareStatement("SELECT COUNT(*) AS count FROM Reservation_refuge WHERE Reservation_refuge.emailref=? AND Reservation_refuge.date_reservation <= ? AND Reservation_refuge.date_reservation + ? <= ?");
 
                     stmt.setString(1, emailRefuge);
                     stmt.setDate(2, dateReservation);
@@ -961,7 +961,7 @@ public class requettes
                     int nb = 0 ;
                     while(res.next())
                     {
-                        nb = res.getInt("COUNT");
+                        nb = res.getInt("count");
                     }
 
                     previousOk = nbDormirDispo > nb;
@@ -1021,12 +1021,20 @@ public class requettes
                     boolean previousOk = true;
                     for(int i = 0; previousOk && i < nbNuits; i++)
                     {
-                        stmt = connection.prepareStatement("SELECT SUM(NBrREPAsRESERVE), FROM Reservation_refuge WHERE emailref=? AND date_reservation <= ? AND DATEADD(day, ?, date_reservation) <= ? AND nbrnuitsreserv > 0 ");
+                        stmt = connection.prepareStatement("SELECT SUM(NBrREPAsRESERVE) AS sum FROM Reservation_refuge WHERE Reservation_refuge.emailref=? AND Reservation_refuge.date_reservation <= ? AND Reservation_refuge.date_reservation + ? <= ?");
                         stmt.setString(1, emailRefuge);
                         stmt.setDate(2, dateReservation);
                         stmt.setInt(3, i);
                         stmt.setDate(4, dateReservation);
-                        previousOk = nbRepasDispo - nbRepas > stmt.executeQuery().getInt("SUM");
+                        
+                        int nb = 0;
+                       	res = stmt.executeQuery() ;
+                        while(res.next())
+                        {
+                        nb = res.getInt("sum");
+                    	}
+
+                        previousOk = nbRepasDispo - nbRepas > nb;
                     }
 
                     if(previousOk)
@@ -1047,12 +1055,26 @@ public class requettes
             /* On procède à la réservation */
             /*-------------------------------------------------------------------------*/
             stmt = connection.prepareStatement("SELECT prixnuite FROM Refuge WHERE Refuge.emailref=? ");
-            int prixNuite = stmt.executeQuery().getInt("prixnuite");
-            int idReservationRefuge = connection.prepareStatement("SELECT MAX(idreservref) FROM Reservation_refuge;").executeQuery().getInt("idreservref") + 1;
+            stmt.setString(1, emailRefuge);
+            int prixNuite = 0;
+            res = stmt.executeQuery() ;
+            while(res.next())
+            {
+            	prixNuite = res.getInt("prixnuite");
+            }
+            
+            stmt = connection.prepareStatement("SELECT MAX(IdReserv) as max FROM Reservation_refuge");
+            res = stmt.executeQuery();
+            int idReservationRefuge = 0;
+            
+            while(res.next())
+            {
+            	idReservationRefuge = res.getInt("max") + 1;
+            }
 
             int heureReservation = LocalTime.now().getHour();
 
-            stmt = connection.prepareStatement("INSERT INTO RESERVATION_REFUGE VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+            stmt = connection.prepareStatement("INSERT INTO RESERVATION_REFUGE VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             stmt.setInt(1, idReservationRefuge);
             stmt.setDate(2, dateReservation);
             stmt.setInt(3, heureReservation);
