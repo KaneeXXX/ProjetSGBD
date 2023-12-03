@@ -216,8 +216,7 @@ public class Main
         }
         else if(choix.equals("22"))
         {
-            System.out.println(" ici : 22");
-
+            requettes.réserverRefuge(connection , sc , id);
         }
         else if(choix.equals("23"))
         {

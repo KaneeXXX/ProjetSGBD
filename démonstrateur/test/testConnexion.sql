@@ -1,27 +1,25 @@
--- Test de l'étape 1 : Connexion && Inscription : 
-
-CREATE TABLE Membre 
-(
-
-    email VARCHAR(50) ,
-    password VARCHAR(50) , 
-    idUser INT ,
-    nom VARCHAR(50) ,
-    prenom VARCHAR(50) , 
-    
-    
-    PRIMARY KEY(email , password , idUser ) 
-    
-);
+--
+INSERT INTO COMPTE_UTILISATEUR(IdUSER) VALUES (1); 
+INSERT INTO COMPTE_UTILISATEUR(IdUSER) VALUES (2); 
+INSERT INTO COMPTE_UTILISATEUR(IdUSER) VALUES (3); 
+INSERT INTO COMPTE_UTILISATEUR(IdUSER) VALUES (4); 
+INSERT INTO COMPTE_UTILISATEUR(IdUSER) VALUES (5); 
+INSERT INTO COMPTE_UTILISATEUR(IdUSER) VALUES (6); 
 
 
-INSERT INTO Membre(email , password , idUser , nom , prenom) VALUES ('nebil@gmail.com' , '1234567' , 1 ,'nebil' , 'Mohamed' );
-INSERT INTO Membre(email , password , idUser , nom , prenom) VALUES ('sidi@gmail.com' , '000000' , 2 ,'sidi' , 'Oumar' );
-INSERT INTO Membre(email , password , idUser , nom , prenom) VALUES ('khaled@gmail.com' , '0123' , 3 ,'khaled' , 'Ahmed' );
-INSERT INTO Membre(email , password , idUser , nom , prenom) VALUES ('victor@gmail.com' , 'h1234' , 4 ,'victor' , 'Hugo' );
+-- 
+INSERT INTO MEMBRE(EMAIlMEMBRE , MDP ,NOM ,PRENOM , ADrPOST , IdUSER) VALUES ('user1@gmail.com' , '12345' , 'nom1' ,'Prenom1' , 'ADR1' , 1) ; 
+INSERT INTO MEMBRE(EMAIlMEMBRE , MDP ,NOM ,PRENOM , ADrPOST , IdUSER) VALUES ('user2@gamil.com' , '01234' , 'nom2' ,'Prenom2' , 'ADR2' , 2) ; 
+INSERT INTO MEMBRE(EMAIlMEMBRE , MDP ,NOM ,PRENOM , ADrPOST , IdUSER) VALUES ('user3@gamil.com' , '01234' , 'nom3' ,'Prenom3' , 'ADR3' , 3) ; 
+INSERT INTO MEMBRE(EMAIlMEMBRE , MDP ,NOM ,PRENOM , ADrPOST , IdUSER) VALUES ('user4@gamil.com' , '01234' , 'nom4' ,'Prenom4' , 'ADR4' , 4) ; 
+-- membre adhérant :
+INSERT INTO MEMBRE(EMAIlMEMBRE , MDP , NOM ,PRENOM ,ADrPOST , IdUSER) VALUES('adh1@gmail.com','12345','Adh1','PrenomAdh1' ,'ADR_ADH 1' , 5);
+INSERT INTO MEMBRE(EMAIlMEMBRE , MDP , NOM ,PRENOM ,ADrPOST , IdUSER) VALUES('adh2@gmail.com','12345','Adh2','PrenomAdh2' ,'ADR_ADH 2' , 6);
 
-INSERT INTO Membre(email , password , idUser , nom , prenom) VALUES ('root' , 'root' , 0 ,'root' , 'root' );
+
+-- 
 
 
-
-
+INSERT INTO ADHERENT(IdADHERENT , EMAIlMEMBRE , MDP , NOM ,PRENOM ,ADrPOST , IdUSER) VALUES(1 ,'adh1@gmail.com','12345','Adh1','PrenomAdh1' ,'ADR_ADH 1' , 5);
+INSERT INTO ADHERENT(IdADHERENT , EMAIlMEMBRE , MDP , NOM ,PRENOM ,ADrPOST , IdUSER) VALUES(2 ,'adh2@gmail.com','12345','Adh2','PrenomAdh2' ,'ADR_ADH 2' , 6);
+INSERT INTO ADHERENT(IdADHERENT , EMAIlMEMBRE , MDP , NOM ,PRENOM ,ADrPOST , IdUSER) VALUES(4 ,'adh3@gmail.com','1234','adh3','prenomadh3' ,'ADR_ADH 3' , 8);
