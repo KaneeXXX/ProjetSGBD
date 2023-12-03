@@ -5,9 +5,13 @@ import java.io.IOException;
 
 import java.sql.*;
 import java.util.Scanner;
-
 import java.util.Date;
 import java.util.HashMap;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+import java.time.LocalTime;
 
 
 
@@ -44,9 +48,9 @@ public class requettes
         
             PreparedStatement stmt = connection.prepareStatement("SELECT COUNT(*) as count , IdUSER  FROM membre WHERE EMAIlMEMBRE=? AND MDP=? GROUP BY IdUSER");
 
-            System.out.print("Entrez votre emial svp : ");
-            String emialAvecRetour = sc.nextLine();
-            String email = emialAvecRetour.replace("\n", "");
+            System.out.print("Entrez votre email svp : ");
+            String emailAvecRetour = sc.nextLine();
+            String email = emailAvecRetour.replace("\n", "");
 
             System.out.print("Entrez votre mot de passe svp : ");
             String passwordAvecRetour = sc.nextLine();
@@ -796,7 +800,7 @@ public class requettes
                 
                 if(row==1)
                 {
-                    System.out.println("Réservation bien pasée ");
+                    System.out.println("Réservation bien passée ");
                     connection.commit();
                 }
                 else
@@ -812,7 +816,7 @@ public class requettes
             {
                 // 
 
-                System.out.println("Désole il n'existe plus de place, on va vous mettre en liste d'attente  : -----------> votre ranga est " + (-1*nbReservFor)+1);
+                System.out.println("Désole il n'existe plus de place, on va vous mettre en liste d'attente  : -----------> votre rang est " + (-1*nbReservFor)+1);
             }
 
 
@@ -832,122 +836,205 @@ public class requettes
     /*
      *----------------- Réservation de Refuge : ---------------------------  
     */
-    public static void réserverRefuge(Connection connection , Scanner sc )
+    public static void réserverRefuge(Connection connection , Scanner sc, int idUser)
     {
-        System.out.println("Réservation de nuités          ------>   tapez 1");
-
-        System.out.println("Réservation de repas            ------->  tapez 2");
-
-        System.out.println("Réservation de repas et de nuités    ------->  tapez 3");
-
-
-        System.out.print("Tapez votre choix 1 , 2 ou 3 : ");
-
-        int choix = sc.nextInt();
-        sc.nextLine();
-
-
-        if(choix==1)
+        try 
         {
-	/* On souhaite réserver uniquement des nuités */
-            try 
-            {
-            	PreparedStatement stmt;
-            	ResultSet res;
+            PreparedStatement stmt;
+            ResultSet res;
+
+            String emailRefuge;
+            String nomRefuge;
             	
-            	/* On exécute ls script de création des tables de réservations et de disponiblités */
-            	/*-------------------------------------------------------------------------*/
-                res = executeFileSQL(connection , "../../sql/réserveRefuge.sql");
+            /* On exécute ls script de création des tables de réservations et de disponiblités */
+            /*-------------------------------------------------------------------------*/
+            res = executeFileSQL(connection , "../../sql/réserveRefuge.sql");
+            if(res==null)
+            {
+                System.err.println("Erreur SQL : Echec lors de la création des tables de réservations et de disponiblités");
+                System.exit(1);                
+            }
+            /*-------------------------------------------------------------------------*/
                 
-                if(res==null)
-                {
-                    System.err.println("Erreur SQL : Echec lors de la création des tables de réservations et de disponiblités");
-                    System.exit(1);                
-                }
-                /*-------------------------------------------------------------------------*/
                 
-                
-                /* On affiche tous les refuges (nom + email) */
+            /* On affiche tous les refuges (nom + email) */
 		    /*-------------------------------------------------------------------------*/
-                stmt =  connection.prepareStatement("SELECT emailref, nomref FROM Refuge");
-                res = stmt.executeQuery();
-                if(res==null)
+            stmt =  connection.prepareStatement("SELECT emailref, nomref FROM Refuge;");
+            res = stmt.executeQuery();
+            if(res==null)
+            {
+                System.err.println("Erreur SQL : Echec lors de la sélection des noms et emails des refuges");
+                System.exit(1);                
+            }
+            System.out.println("Liste des refuges :");
+                
+            while(res.next())
+            {
+                String email = res.getString("emailref");
+                String nom = res.getString("nom");
+		        System.out.println(nom + " : " + email);
+            }
+            /*-------------------------------------------------------------------------*/
+            	
+            	
+            /* On demande quel refuge est sollicité (email) et on cherche le nombre de nuités et de repas disponibles (POUR PERIODE DE RESERVATION) et on affiche pour informer l'utilisateur */
+            /*-------------------------------------------------------------------------*/
+            System.out.print("\nEntrez l'adresse e-mail du refuge dans lequel vous souhaitez réserver :");
+                
+            emailRefuge = sc.nextLine().replace("\n", "");
+            stmt = connection.prepareStatement("SELECT nbrplacesdormir FROM Refuge WHERE emailref=?;");
+            stmt.setString(1, emailRefuge);
+            int nbDormirDispo = stmt.executeQuery().getInt("nbrplacesdormir");
+
+            stmt = connection.prepareStatement("SELECT nbrrepas FROM Refuge WHERE Dispo.email=?;");
+            stmt.setString(1, emailRefuge);
+            int nbRepasDispo = stmt.executeQuery().getInt("nbrrepas");
+                
+            stmt = connection.prepareStatement("SELECT nom FROM Refuge WHERE Refuge.emailref=?;");
+            stmt.setString(1, emailRefuge);
+            nomRefuge = stmt.executeQuery().getString("nom");
+
+            System.out.println("Le refuge" + nomRefuge + "d'email " + emailRefuge + " a " + nbDormirDispo + " nuités de disponible ainsi que " + nbRepasDispo + " repas de disponible.");
+            /*-------------------------------------------------------------------------*/
+                
+                
+            /* On traite les nuités */
+            /*-------------------------------------------------------------------------*/
+            int nbNuits = 0;
+            java.sql.Date dateReservation = new java.sql.Date(0);
+            // Il faut boucler pour redonner une tentative à l'utilisateur
+            boolean done = false;
+            while(!done)
+            {
+                System.out.println("Attention, il n'est pas possible de ne réserver à la fois aucune nuité et à la fois aucun repas !");
+                System.out.print("Entrez la date de réservation (format : YYYY-MM-DD) : ");
+                String dateReservationString = sc.nextLine().replace("\n", "");
+                        
+                /* Traiter la date de réservation */
+                SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD");
+                long millis = sdf.parse(dateReservationString).getTime();
+                dateReservation = new java.sql.Date(millis);
+
+
+                System.out.print("Entrez le nombre de nuités que vous souhaitez réserver : ");
+                nbNuits = sc.nextInt();
+
+                
+                /* A itérer sur toutes les dates de la période de réservation */
+                boolean previousOk = true;
+                for(int i = 0; previousOk && i < nbNuits; i++)
                 {
-                    System.err.println("Erreur SQL : Echec lors de la sélection des noms et emails des refuges");
-                    System.exit(1);                
+                    stmt = connection.prepareStatement("SELECT COUNT(*), FROM Reservation_refuge WHERE emailref=? AND date_reservation <= ? AND DATEADD(day, ?, date_reservation) <= ? AND nbrnuitsreserv > 0;");
+                    stmt.setString(1, emailRefuge);
+                    stmt.setDate(2, dateReservation);
+                    stmt.setInt(3, i);
+                    stmt.setDate(4, dateReservation);
+                    previousOk = nbDormirDispo > stmt.executeQuery().getInt("COUNT");
                 }
 
-               //  PreparedStatement stmt = connection.prepareStatement("SELECT nbDormirDispo FROM Dispo WHERE Dispo.email=?");
-                
-                
-                System.out.print("tapez svp les nombres de nuits :");
-                
-                int nbNuits = sc.nextInt();
-                stmt.setInt(1, nbNuits);
-
-                ResultSet res2 = stmt.executeQuery();
-
-                int nbDispo = -1 ;
-
-                while(res2.next()) 
+                if(previousOk)
                 {
-                    nbDispo = res2.getInt("nbDormirDispo");
-
-                    
-                }
-
-                if(nbDispo==-1)
-                {
-                    System.err.println("Erreur SQL ou Refuge non trouvé ");
-                    System.exit(0);
+                    // Il y a au moins une place toutes les nuits de la période
+                    done = true;
                 }
                 else
                 {
-                    if(nbDispo < nbNuits)
+                    // Il y a au moins une nuit sans aucune place de disponible
+                    System.out.println("Désolé, ce refuge a aucune place lors d'au moins une nuit.");
+                }
+            }
+            /*-------------------------------------------------------------------------*/
+
+
+            /* On traite les repas */
+            /*-------------------------------------------------------------------------*/
+            int dejeuner = 0;
+            int diner = 0;
+            int souper = 0;
+            int casseCroute = 0;
+            int nbRepas = 0;
+            done = false;
+
+            while(!done)
+            {
+
+                if(nbNuits == 0)
+                    System.out.println("Attention, vous n'avez pas réservé de nuités, il vous faut donc réserver au moins un repas !");
+
+                System.out.print("Voulez vous réserver le déjeuner (1 : oui | 0 : non) : ");
+                dejeuner = sc.nextInt();
+
+                System.out.print("Voulez vous réserver le dîner (1 : oui | 0 : non) : ");
+                diner = sc.nextInt();
+
+                System.out.print("Voulez vous réserver le souper (1 : oui | 0 : non) : ");
+                souper = sc.nextInt();
+
+                System.out.print("Voulez vous réserver le casse-croûte (1 : oui | 0 : non) : ");
+                casseCroute = sc.nextInt();
+
+                nbRepas = dejeuner + diner + souper + casseCroute;
+
+                if(nbRepas > 0)
+                {
+                    /* A itérer sur toutes les dates de la période de réservation */
+                    boolean previousOk = true;
+                    for(int i = 0; previousOk && i < nbNuits; i++)
                     {
-                        System.out.println("Désolé, nous n'avons pas de chambres suffisantes.");                            
+                        stmt = connection.prepareStatement("SELECT SUM(nbrrepasreserve), FROM Reservation_refuge WHERE emailref=? AND date_reservation <= ? AND DATEADD(day, ?, date_reservation) <= ? AND nbrnuitsreserv > 0;");
+                        stmt.setString(1, emailRefuge);
+                        stmt.setDate(2, dateReservation);
+                        stmt.setInt(3, i);
+                        stmt.setDate(4, dateReservation);
+                        previousOk = nbRepasDispo - nbRepas > stmt.executeQuery().getInt("SUM");
+                    }
+
+                    if(previousOk)
+                    {
+                        // Il y a au moins une place toutes les nuits de la période
+                        done = true;
                     }
                     else
                     {
-                        // réservation :
-
-                        
-
+                        // Il y a au moins une nuit sans aucune place de disponible
+                        System.out.println("Désolé, ce refuge n'a pas assez de repas lors d'au moins un jour.");
                     }
                 }
-
-                        
-            } 
-            catch(SQLException e) 
-            {
-                e.printStackTrace();
             }
+            /*-------------------------------------------------------------------------*/
+
+
+            /* On procède à la réservation */
+            /*-------------------------------------------------------------------------*/
+            stmt = connection.prepareStatement("SELECT prixnuite FROM Refuge WHERE Refuge.emailref=?;");
+            int prixNuite = stmt.executeQuery().getInt("prixnuite");
+            int idReservationRefuge = connection.prepareStatement("SELECT MAX(idreservref) FROM Reservation_refuge;").executeQuery().getInt("idreservref") + 1;
+
+            int heureReservation = LocalTime.now().getHour();
+
+            stmt = connection.prepareStatement("INSERT INTO RESERVATION_REFUGE VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+            stmt.setInt(1, idReservationRefuge);
+            stmt.setDate(2, dateReservation);
+            stmt.setInt(3, heureReservation);
+            stmt.setInt(4, nbNuits);
+            stmt.setInt(5, nbRepas);
+            stmt.setInt(6, nbNuits * prixNuite);
+            stmt.setString(7, emailRefuge);
+            stmt.setInt(8, idUser);
             
-
-        
-        
-        }
-        else if(choix==2)
+            System.out.println("Votre réservation a été prise en compte, merci !");
+		    /*-------------------------------------------------------------------------*/
+                        
+        } 
+        catch(SQLException | ParseException e) 
         {
-
+            e.printStackTrace();
         }
-        else if(choix==3)
-        {
-
-        }
-        else
-        {
-            // choix invalide :
-            System.out.println("choix invalide ");
-            System.exit(0);
-        }
-    
-    
     }
 
 
     /*
-     *----------------- Réservation d'une formation: ---------------------------  
+     *----------------- Réservation de matériels: ---------------------------  
     */
     public static void réserverMatériels(Connection connection , Scanner sc , int id )
     {
@@ -999,26 +1086,26 @@ public class requettes
 
 
         // réservation matériels : 
-        System.out.print("le nombre de piéces à rserver :");
+        System.out.print("Le nombre de pièces à réserver :");
 
         int nb = sc.nextInt() ; 
         sc.nextLine(); // pour le \n 
 
-        System.out.print("la date de réservation sous la forme YYYY-MM-DD : ");
+        System.out.print("La date de réservation sous la forme YYYY-MM-DD : ");
         String dateRéserv = sc.nextLine();
 
-        System.out.print("la date de récupération sous la forme YYYY-MM-DD : ");
+        System.out.print("La date de récupération sous la forme YYYY-MM-DD : ");
         String dateRécup = sc.nextLine();
 
         System.out.println("le Lot que voulez vous réservez :");
         
-        System.out.print("\tmarque :");
+        System.out.print("\tMarque :");
         String marque = sc.nextLine();
 
-        System.out.print("\tmodele :");
+        System.out.print("\tModele :");
         String modele = sc.nextLine();
 
-        System.out.print("\tannee d'achat(2022 ..) :");
+        System.out.print("\tAnnee d'achat(2022 ..) :");
         String anneeAchat = sc.nextLine();
 
  
@@ -1110,7 +1197,7 @@ public class requettes
 
 
 /*
- * ------------------------- Droit de l'oublie --------------------------
+ * ------------------------- Droit à l'oubli --------------------------
 */
 
 public static void oublierMoi(Connection connection , int id )
