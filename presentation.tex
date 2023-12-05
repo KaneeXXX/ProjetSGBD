@@ -1,0 +1,132 @@
+\documentclass{beamer}
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc} % Set input encoding to Unicode UTF-8
+\usepackage[T1]{fontenc} % Set character encoding to T1/Cork
+\usepackage{minted}
+\usepackage{svg}
+\usepackage{hyphenat}
+\usepackage{amssymb}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{csquotes}
+\usepackage{float}
+
+\newcommand\att[1]{\textnhtt{#1}}
+
+\title{Projet de Bases de Données}
+\author{Pradana \textbf{Aumars}
+  \and
+  David \textbf{Behrens}
+  \and
+  El Hadji Abdoul Aziz \textbf{Kane}
+  \and
+  Mohamed Lemine \textbf{Mohamed Ahmed}
+  \and
+  Mohamedou \textbf{Chrif M'hamed}}
+
+\begin{document}
+\frame{\titlepage}
+\begin{frame}
+  \frametitle{Sommaire}
+  \begin{enumerate}
+  \item Analyse du problème
+  \item Conception
+  \item Schéma relationnel
+  \item Analyse des fonctionnalités
+  \item Bilan du projet
+  \item Mode d'emploi du démonstrateur
+  \end{enumerate}
+\end{frame}
+\begin{frame}{L'exemple de \att{Refuge}}
+  
+  \textbf{Propriétés}: 
+\att{emailRef}, % email du refuge
+\att{nomRef}, % nom du refuge
+\att{numTel}, % numéro de téléphone (optionnel) du refuge
+\att{secGeo}, % secteur géographique du refuge
+\att{dateOuv}, % date d'ouverture du refuge
+\att{dateFerm}, % date de fermeture du refuge
+\att{nbrPlacesRepas}, % nombre de places pour les repas dans un refuge
+\att{nbrPlacesDormir}, % nombre de places pour dormir dans un refuge
+\att{textePrez}, % texte de présentation d'un refuge
+\att{typePayement}, % type de paiement pour un refuge
+\att{prixNuite} % prix d'une nuite dans un refuge
+
+\textbf{Dépendances fonctionnelles}:
+\att{emailRef}
+$\rightarrow$
+\att{nomRef},
+\att{numTel},
+\att{secGeo},
+\att{dateOuv},
+\att{dateFerm},
+\att{nbrPlacesRepas},
+\att{nbrPlacesDormir},
+\att{textePrez},
+\att{typePayement},
+\att{prixNuite}
+
+\textbf{Conraintes de valeur}:
+$\att{dateOuv} < \att{dateFerm}$
+
+$\att{nbrPlacesRepas} \geq 0$
+
+$\att{nbrPlacesDormir} \geq 0$
+
+$\att{typePayement} \in \{ \texttt{"espèce"}, \texttt{"chèque"}, \texttt{"carte-bleue"} \}$
+
+$\att{prixNuite} \geq 0$
+\end{frame}
+
+\begin{frame}
+  \begin{figure}[H]
+\includesvg[inkscapelatex=false, width=\textwidth]{schema}
+\caption{Diagramme entité-association}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+  
+\att{REFUGE}(\att{\underline{emailRef}}, \att{nomRef}, \att{numTel}, \att{secGeo}, \att{dateOuv}, \att{dateFerm}, \att{nbrPlacesRepas}, \att{nbrPlacesDormir}, \att{textePrez}, \att{typePayement}, \att{prixNuite})
+\begin{itemize}
+\item \textbf{Forme normale}: Non normalisé (\att{numTel} pourrait être \att{NULL})
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Exemple du code SQL}
+  \begin{minted}[fontsize=\scriptsize]{SQL}
+    CREATE TABLE REFUGE (
+    EMAIL VARCHAR(50) PRIMARY KEY,
+    NOM VARCHAR(50),
+    NUMTEL INT,
+    SECGEO VARCHAR(50),
+    DATEOUV DATE,
+    DATEFERME DATE,
+    CHECK (DATEOUV < DATEFERME),
+    NBrREPAS INT,
+    CHECK (NBrREPAS >= 0),
+    NBrDORMIR INT,
+    CHECK (NBrDORMIR >=0),
+    TEXTE VARCHAR(50),
+    TYPePAYEMENT VARCHAR(20),
+    CHECK (TYPePAYEMENT IN ('espèces','chèque', 'carte-bleue')),
+    PRIxNUITE DECIMAL,
+    CHECK ( PRIxNUITE >= 0),
+    PRIX DECIMAL
+    );
+  \end{minted}
+\end{frame}
+
+\begin{frame}
+  \begin{itemize}
+  \item Toutes les fonctionnalités ont été implémentées.
+  \item Départ un peu rapide, mais nous avons, par la suite, adopté une approche plus méthodique.
+  \item Interface utilisateur suffisante mais à perfectionner au niveau du gestion des exceptions et valeurs inattendues
+  \end{itemize}
+\end{frame}
+\end{document}
+
+% Local Variables:
+% TeX-command-extra-options: "-shell-escape"
+% End:
