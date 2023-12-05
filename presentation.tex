@@ -27,8 +27,7 @@
 
 \begin{document}
 \frame{\titlepage}
-\begin{frame}
-  \frametitle{Sommaire}
+\begin{frame}{Sommaire}
   \begin{enumerate}
   \item Analyse du problème
   \item Conception
@@ -38,7 +37,7 @@
   \item Mode d'emploi du démonstrateur
   \end{enumerate}
 \end{frame}
-\begin{frame}{L'exemple de \att{Refuge}}
+\begin{frame}{Analyse du problème: l'exemple de \att{Refuge}}
   
   \textbf{Propriétés}: 
 \att{emailRef}, % email du refuge
@@ -67,7 +66,7 @@ $\rightarrow$
 \att{typePayement},
 \att{prixNuite}
 
-\textbf{Conraintes de valeur}:
+\textbf{Contraintes de valeur}:
 $\att{dateOuv} < \att{dateFerm}$
 
 $\att{nbrPlacesRepas} \geq 0$
@@ -79,22 +78,28 @@ $\att{typePayement} \in \{ \texttt{"espèce"}, \texttt{"chèque"}, \texttt{"cart
 $\att{prixNuite} \geq 0$
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Conception}
   \begin{figure}[H]
 \includesvg[inkscapelatex=false, width=\textwidth]{schema}
 \caption{Diagramme entité-association}
 \end{figure}
 \end{frame}
 
-\begin{frame}
-  
+\begin{frame}{Schéma relationnel: les exemples de \att{Refuge} et \att{ReservationRefuge}}
 \att{REFUGE}(\att{\underline{emailRef}}, \att{nomRef}, \att{numTel}, \att{secGeo}, \att{dateOuv}, \att{dateFerm}, \att{nbrPlacesRepas}, \att{nbrPlacesDormir}, \att{textePrez}, \att{typePayement}, \att{prixNuite})
 \begin{itemize}
 \item \textbf{Forme normale}: Non normalisé (\att{numTel} pourrait être \att{NULL})
 \end{itemize}
+\newline
+\att{RESERVATION\_REFUGE}(\att{\underline{idReservRef}}, \att{dateReservRef}, \att{heureReservRef}, \att{nbrNuitsReserv}, \att{nbrRepasReserv}, \att{prixTotalReserv}, \att{emailRef}, \att{idUser})
+\begin{itemize}
+\item \textbf{Forme normale}: 3FNBCK
+\item \att{emailRef} référence \att{REFUGE}(\att{emailRef})
+\item \att{idUser} référence \att{COMPTE\_UTILISATEUR}(\att{idUser})
+\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Exemple du code SQL}
+\begin{frame}[fragile]{Implémentation de \att{Refuge}}
   \begin{minted}[fontsize=\scriptsize]{SQL}
     CREATE TABLE REFUGE (
     EMAIL VARCHAR(50) PRIMARY KEY,
@@ -118,13 +123,37 @@ $\att{prixNuite} \geq 0$
   \end{minted}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Bilan du projet}
   \begin{itemize}
   \item Toutes les fonctionnalités ont été implémentées.
   \item Départ un peu rapide, mais nous avons, par la suite, adopté une approche plus méthodique.
-  \item Interface utilisateur suffisante mais à perfectionner au niveau du gestion des exceptions et valeurs inattendues
+  \item Interface utilisateur suffisante mais à perfectionner au niveau de la gestion des exceptions et valeurs inattendues
   \end{itemize}
 \end{frame}
+
+\begin{frame}{Mode d'emploi du démonstrateur}
+  \begin{columns}
+    \begin{column}{0.7\textwidth}
+        \begin{figure}[H]
+      \includegraphics[width=\textwidth]{régles_utilisation.png}
+\caption{Les règles d'utilisation}
+\end{figure}
+      \end{column}
+    \begin{column}{0.3\textwidth}
+        \begin{figure}[H]
+      \includegraphics[width=\textwidth]{h_p.png}
+\caption{La hiérarchie des fichiers}
+\end{figure}
+      \end{column}
+    \end{columns}
+  \end{frame}
+
+  \begin{frame}{Mode d'emploi du démonstrateur}
+        \begin{figure}[H]
+      \includegraphics[width=\textwidth]{g.png}
+\caption{L'organisation des fonctionnalités}
+\end{figure}
+  \end{frame}
 \end{document}
 
 % Local Variables:
